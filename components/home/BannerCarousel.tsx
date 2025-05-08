@@ -8,30 +8,32 @@ const { width } = Dimensions.get('window');
 const banners = [
   {
     id: '1',
-    title: 'Summer Sale',
-    subtitle: 'Up to 50% off',
-    image:
-      'https://images.pexels.com/photos/5632402/pexels-photo-5632402.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2',
-    color: '#FFEDD5',
-    textColor: '#7C2D12',
+    title: 'Jordan Series',
+    subtitle: 'Limited editions just dropped',
+    image: require('@/assets/images/basket/text.png'),
+    color: '#F3F4F6',
+    textColor: '#111827',
+    discount: '-30%',
   },
   {
     id: '2',
-    title: 'New Arrivals',
-    subtitle: 'Check out the latest',
+    title: 'Nike Air Zoom',
+    subtitle: 'Boost your game',
     image:
-      'https://images.pexels.com/photos/5624977/pexels-photo-5624977.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2',
-    color: '#DBEAFE',
-    textColor: '#1E3A8A',
+      'https://images.pexels.com/photos/12348538/pexels-photo-12348538.jpeg?auto=compress&cs=tinysrgb&w=800',
+    color: '#E0F2FE',
+    textColor: '#0369A1',
+    discount: '-25%',
   },
   {
     id: '3',
-    title: 'Flash Deals',
-    subtitle: 'Limited time offers',
+    title: 'Adidas Harden Vol.6',
+    subtitle: 'Style & speed',
     image:
-      'https://images.pexels.com/photos/5868722/pexels-photo-5868722.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2',
-    color: '#DCFCE7',
-    textColor: '#14532D',
+      'https://images.pexels.com/photos/11244664/pexels-photo-11244664.jpeg?auto=compress&cs=tinysrgb&w=800',
+    color: '#FCE7F3',
+    textColor: '#9D174D',
+    discount: '-40%',
   },
 ];
 
@@ -41,7 +43,7 @@ export default function BannerCarousel() {
       <Carousel
         loop
         width={width}
-        height={190}
+        height={200}
         autoPlay
         autoPlayInterval={4000}
         data={banners}
@@ -50,12 +52,25 @@ export default function BannerCarousel() {
           <View style={[styles.bannerItem, { backgroundColor: item.color }]}>
             <View style={styles.bannerContent}>
               <View style={{ flex: 1 }}>
-                <Text style={[styles.title, { color: item.textColor }]}>{item.title}</Text>
-                <Text style={[styles.subtitle, { color: item.textColor }]}>{item.subtitle}</Text>
+                {/* Tag promo */}
+                <View style={[styles.discountTag, { backgroundColor: item.textColor }]}>
+                  <Text style={styles.discountText}>{item.discount}</Text>
+                </View>
+
+                <Text style={[styles.title, { color: item.textColor }]}>
+                  {item.title}
+                </Text>
+                <Text style={[styles.subtitle, { color: '#6B7280' }]}>
+                  {item.subtitle}
+                </Text>
+
                 <Pressable
                   style={({ pressed }) => [
                     styles.shopNowButton,
-                    { backgroundColor: item.textColor, opacity: pressed ? 0.9 : 1 },
+                    {
+                      backgroundColor: item.textColor,
+                      opacity: pressed ? 0.9 : 1,
+                    },
                   ]}
                 >
                   <Text style={styles.shopNowText}>Shop Now</Text>
@@ -82,7 +97,7 @@ const styles = StyleSheet.create({
     padding: 16,
     elevation: 4,
     shadowColor: '#000',
-    shadowOpacity: 0.06,
+    shadowOpacity: 0.05,
     shadowOffset: { width: 0, height: 4 },
     shadowRadius: 6,
   },
@@ -91,15 +106,28 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
   },
+  discountTag: {
+    alignSelf: 'flex-start',
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 12,
+    marginBottom: 8,
+  },
+  discountText: {
+    fontSize: 12,
+    fontWeight: '600',
+    color: '#fff',
+  },
   title: {
     fontFamily: 'Poppins-Bold',
-    fontSize: 20,
+    fontSize: 22,
     marginBottom: 4,
+    textTransform: 'uppercase',
   },
   subtitle: {
     fontFamily: 'Inter-Regular',
     fontSize: 14,
-    marginBottom: 12,
+    marginBottom: 14,
   },
   shopNowButton: {
     flexDirection: 'row',
@@ -118,7 +146,7 @@ const styles = StyleSheet.create({
   image: {
     width: 110,
     height: 110,
-    borderRadius: 12,
+    borderRadius: 16,
     marginLeft: 12,
   },
 });
