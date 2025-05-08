@@ -1,4 +1,4 @@
-import BannerCarousel from "@/components/home/BannerCarousel"
+// import BannerCarousel from "@/components/home/BannerCarousel"
 import SearchHeader from "@/components/home/Header"
 import { ScrollView, StyleSheet } from "react-native"
 import { SafeAreaView } from "react-native-safe-area-context"
@@ -12,7 +12,7 @@ export default function HomeScreen() {
         showsVerticalScrollIndicator={false}
         contentContainerStyle={styles.scrollContent}
       >
-        <BannerCarousel />
+        {/* <BannerCarousel /> */}
 
       </ScrollView>
     </SafeAreaView>

@@ -10,7 +10,7 @@ const banners = [
     id: '1',
     title: 'Jordan Series',
     subtitle: 'Limited editions just dropped',
-    image: require('@/assets/images/basket/text.png'),
+    image: require('../../assets/images/basket/text.png'),
     color: '#F3F4F6',
     textColor: '#111827',
     discount: '-30%',
