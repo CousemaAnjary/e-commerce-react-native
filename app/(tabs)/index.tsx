@@ -6,6 +6,7 @@ export default function HomeScreen() {
     <SafeAreaView style={{ flex: 1, backgroundColor: '#ffffff' }}>
       <SearchHeader />
       {/* le reste de ta page */}
+      
     </SafeAreaView>
   );
 }
