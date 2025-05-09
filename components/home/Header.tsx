@@ -1,6 +1,6 @@
-import React from 'react';
-import { View, TextInput, StyleSheet, TouchableOpacity } from 'react-native';
-import { Bell, ShoppingCart, Search } from 'lucide-react-native';
+import React from 'react'
+import { View, TextInput, StyleSheet, TouchableOpacity } from 'react-native'
+import { Bell, Search } from 'lucide-react-native'
 
 export default function Header() {
   return (
@@ -19,10 +19,10 @@ export default function Header() {
       <TouchableOpacity style={styles.iconButton}>
         <Bell size={20} color="#1F2937" />
       </TouchableOpacity>
-
+{/* 
       <TouchableOpacity style={styles.iconButton}>
         <ShoppingCart size={20} color="#1F2937" />
-      </TouchableOpacity>
+      </TouchableOpacity> */}
     </View>
   );
 }

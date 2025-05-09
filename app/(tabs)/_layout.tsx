@@ -1,6 +1,6 @@
 import { Tabs } from 'expo-router';
 import { StyleSheet, View } from 'react-native';
-import { ShoppingBag, Home, CircleUserRound } from 'lucide-react-native';
+import { Home, CircleUserRound, ShoppingCart } from 'lucide-react-native';
 
 export default function TabLayout() {
   return (
@@ -27,7 +27,7 @@ export default function TabLayout() {
         options={{
           tabBarIcon: ({ color, size }) => (
             <View style={styles.iconWrapper}>
-              <ShoppingBag color={color} size={size} />
+              <ShoppingCart color={color} size={size} />
             </View>
           ),
         }}
@@ -49,7 +49,7 @@ export default function TabLayout() {
 const styles = StyleSheet.create({
   tabBar: {
     position: 'absolute',
-    bottom: 40,
+    bottom: 20,
     left: 20,
     right: 20,
     height: 63,
