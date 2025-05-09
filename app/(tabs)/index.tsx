@@ -30,9 +30,13 @@ export default function HomeScreen() {
               <ChevronRight size={16} color="#1E3A8A" />
             </TouchableOpacity>
           </View>
+
           <NewArrivals />
+          
         </View>
+
       </ScrollView>
+
     </SafeAreaView>
   );
 }
