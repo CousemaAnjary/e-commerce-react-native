@@ -10,7 +10,7 @@ const newProducts = products.slice(products.length - 4);
 export default function NewArrivals() {
   const renderProduct = ({ item }: { item: typeof products[number] }) => (
     <TouchableOpacity style={styles.productCard}>
-      <Image source={{ uri: item.image }} style={styles.productImage} />
+      <Image source={item.image } style={styles.productImage} />
       <View style={styles.productInfo}>
         <Text style={styles.productName} numberOfLines={2}>{item.name}</Text>
         <View style={styles.ratingContainer}>
@@ -18,7 +18,7 @@ export default function NewArrivals() {
           <Text style={styles.ratingText}>{item.rating}</Text>
           <Text style={styles.reviewCount}>({item.reviewCount})</Text>
         </View>
-        <Text style={styles.price}>${item.price.toFixed(2)}</Text>
+        <Text style={styles.price}>{item.price} AR</Text>
       </View>
     </TouchableOpacity>
   );
@@ -67,7 +67,6 @@ const styles = StyleSheet.create({
     fontFamily: 'Inter-Medium',
     fontSize: 14,
     color: '#1E293B',
-    marginBottom: 8,
     height: 40,
   },
   ratingContainer: {
@@ -88,8 +87,9 @@ const styles = StyleSheet.create({
     marginLeft: 2,
   },
   price: {
-    fontFamily: 'Poppins-SemiBold',
-    fontSize: 16,
-    color: '#4F46E5',
+    fontFamily: 'Inter-SemiBold', 
+    fontSize: 14,    
+    color: '#1E3A8A', 
   },
+  
 });
