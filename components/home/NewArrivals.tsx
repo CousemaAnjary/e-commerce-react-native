@@ -18,7 +18,7 @@ export default function NewArrivals() {
           <Text style={styles.ratingText}>{item.rating}</Text>
           <Text style={styles.reviewCount}>({item.reviewCount})</Text>
         </View>
-        <Text style={styles.price}>{item.price} AR</Text>
+        <Text style={styles.price}>{item.price} FMG</Text>
       </View>
     </TouchableOpacity>
   );
@@ -64,15 +64,15 @@ const styles = StyleSheet.create({
     padding: 12,
   },
   productName: {
-    fontFamily: 'Inter-Medium',
+    fontFamily: 'Inter-SemiBold',
     fontSize: 14,
     color: '#1E293B',
-    height: 40,
+    height: 35,
   },
   ratingContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 8,
+    marginBottom: 2,
   },
   ratingText: {
     fontFamily: 'Inter-Medium',
@@ -87,8 +87,8 @@ const styles = StyleSheet.create({
     marginLeft: 2,
   },
   price: {
-    fontFamily: 'Inter-SemiBold', 
-    fontSize: 14,    
+    fontFamily: 'Inter-Bold', 
+    fontSize: 12,    
     color: '#1E3A8A', 
   },
   

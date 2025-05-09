@@ -102,6 +102,10 @@ export default function BannerCarousel() {
         )}
       />
     </View>
+
+    
+
+    
   );
 }
 

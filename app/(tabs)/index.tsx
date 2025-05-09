@@ -42,7 +42,7 @@ const styles = StyleSheet.create({
     paddingBottom: 24,
   },
   newArrivalsSection: {
-    marginTop: 12,
+  
     marginBottom: 65,
     paddingHorizontal: 16,
   },
