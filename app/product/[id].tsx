@@ -1,6 +1,6 @@
 import { getProductById } from "@/data/products";
 import { useLocalSearchParams, useRouter } from "expo-router";
-import { ChevronLeft, Minus, Plus, Star } from "lucide-react-native";
+import { ChevronLeft, Minus, Plus, ShoppingCart, Star } from "lucide-react-native";
 import React, { useState } from "react";
 import {
   Image,
@@ -132,7 +132,14 @@ export default function ProductScreen() {
               activeOpacity={0.8}
               disabled={!product.inStock}
             >
-              <Text style={styles.addToCartText}>🛒 Ajouter au panier</Text>
+              <View style={styles.addToCartContent}>
+                <ShoppingCart
+                  size={18}
+                  color="#FFFFFF"
+                  style={{ marginRight: 8 }}
+                />
+                <Text style={styles.addToCartText}>Ajouter au panier</Text>
+              </View>
             </TouchableOpacity>
           </View>
         </ScrollView>
@@ -143,24 +150,23 @@ export default function ProductScreen() {
 
 const styles = StyleSheet.create({
   headerContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
     paddingHorizontal: 16,
     paddingVertical: 12,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: "#FFFFFF",
     borderBottomWidth: 1,
-    borderBottomColor: '#E5E7EB',
+    borderBottomColor: "#E5E7EB",
   },
   backButton: {
     padding: 4,
   },
   headerTitle: {
     fontSize: 18,
-    fontWeight: '600',
-    color: '#1F2937',
+    fontWeight: "600",
+    color: "#1F2937",
   },
-  
 
   container: {
     flex: 1,
@@ -180,6 +186,12 @@ const styles = StyleSheet.create({
     marginTop: -24,
     padding: 24,
   },
+  addToCartContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  
   header: {
     flexDirection: "row",
     justifyContent: "space-between",
