@@ -21,7 +21,7 @@ export default function NewArrivals() {
         <Text style={styles.price}>{item.price} FMG</Text>
       </View>
     </TouchableOpacity>
-  );
+  )
 
   return (
     <View style={styles.container}>
