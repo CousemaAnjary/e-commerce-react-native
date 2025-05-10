@@ -1,42 +1,36 @@
 import React, { useState } from 'react';
-import { View, Text, ScrollView, Image, StyleSheet, TouchableOpacity, Button } from 'react-native';
+import { View, Text, ScrollView, Image, StyleSheet, TouchableOpacity } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
-import { Star, Minus, Plus, Heart } from 'lucide-react-native';
+import { Star, Minus, Plus } from 'lucide-react-native';
 import { getProductById } from '@/data/products';
-
 
 export default function ProductScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const router = useRouter();
   const [quantity, setQuantity] = useState(1);
   const [isFavorite, setIsFavorite] = useState(false);
-  
+
   const product = getProductById(id);
-  
+
   if (!product) {
     return (
       <View style={styles.notFound}>
-        <Text style={styles.notFoundText}>Product not found</Text>
-        <Button
-          title="Go Back"
-          onPress={() => router.back()}
-        />
+        <Text style={styles.notFoundText}>Produit introuvable</Text>
+        <TouchableOpacity onPress={() => router.back()} style={styles.goBackButton}>
+          <Text style={styles.goBackButtonText}>Retour</Text>
+        </TouchableOpacity>
       </View>
     );
   }
 
   const incrementQuantity = () => {
-    setQuantity(prev => prev + 1);
+    setQuantity((prev) => prev + 1);
   };
 
   const decrementQuantity = () => {
     if (quantity > 1) {
-      setQuantity(prev => prev - 1);
+      setQuantity((prev) => prev - 1);
     }
-  };
-
-  const toggleFavorite = () => {
-    setIsFavorite(!isFavorite);
   };
 
   return (
@@ -44,22 +38,7 @@ export default function ProductScreen() {
       <ScrollView showsVerticalScrollIndicator={false}>
         {/* Product Image */}
         <View style={styles.imageContainer}>
-          <Image
-            source={product.image }
-            style={styles.image}
-            resizeMode="cover"
-          />
-          <TouchableOpacity 
-            style={styles.favoriteButton} 
-            onPress={toggleFavorite}
-            activeOpacity={0.7}
-          >
-            <Heart 
-              size={24} 
-              color={isFavorite ? '#EF4444' : '#FFFFFF'} 
-              fill={isFavorite ? '#EF4444' : 'none'} 
-            />
-          </TouchableOpacity>
+          <Image source={product.image} style={styles.image} resizeMode="cover" />
         </View>
 
         {/* Product Details */}
@@ -72,17 +51,17 @@ export default function ProductScreen() {
           <View style={styles.ratingContainer}>
             <Star size={18} color="#F59E0B" fill="#F59E0B" />
             <Text style={styles.rating}>{product.rating}</Text>
-            <Text style={styles.reviews}>({product.reviews} Reviews)</Text>
+            <Text style={styles.reviews}>({product.reviews} avis)</Text>
           </View>
 
           <Text style={styles.description}>{product.description}</Text>
 
           {/* Quantity Selector */}
           <View style={styles.quantityContainer}>
-            <Text style={styles.quantityLabel}>Quantity</Text>
+            <Text style={styles.quantityLabel}>Quantité</Text>
             <View style={styles.quantityControls}>
-              <TouchableOpacity 
-                style={styles.quantityButton} 
+              <TouchableOpacity
+                style={styles.quantityButton}
                 onPress={decrementQuantity}
                 disabled={quantity <= 1}
                 activeOpacity={0.7}
@@ -90,8 +69,8 @@ export default function ProductScreen() {
                 <Minus size={20} color={quantity <= 1 ? '#D1D5DB' : '#4B5563'} />
               </TouchableOpacity>
               <Text style={styles.quantityValue}>{quantity}</Text>
-              <TouchableOpacity 
-                style={styles.quantityButton} 
+              <TouchableOpacity
+                style={styles.quantityButton}
                 onPress={incrementQuantity}
                 activeOpacity={0.7}
               >
@@ -100,24 +79,28 @@ export default function ProductScreen() {
             </View>
           </View>
 
-          {/* Add to Cart Button */}
-          <Button
-            title="Add to Cart"
-        
-        
-           
-          />
-
           {/* Stock Status */}
-          <View style={styles.stockContainer}>
-            <View style={[
-              styles.stockIndicator,
-              product.inStock ? styles.inStock : styles.outOfStock
-            ]} />
-            <Text style={styles.stockText}>
-              {product.inStock ? 'In Stock' : 'Out of Stock'}
-            </Text>
-          </View>
+          {product.inStock ? (
+            <View style={styles.stockBadge}>
+              <Text style={styles.stockBadgeText}>🟢 En stock</Text>
+            </View>
+          ) : (
+            <View style={[styles.stockBadge, { backgroundColor: '#FEE2E2' }]}>
+              <Text style={[styles.stockBadgeText, { color: '#B91C1C' }]}>🔴 Rupture de stock</Text>
+            </View>
+          )}
+
+          {/* Add to Cart Button */}
+          <TouchableOpacity
+            style={[
+              styles.addToCartButton,
+              !product.inStock && { backgroundColor: '#94A3B8' },
+            ]}
+            activeOpacity={0.8}
+            disabled={!product.inStock}
+          >
+            <Text style={styles.addToCartText}>🛒 Ajouter au panier</Text>
+          </TouchableOpacity>
         </View>
       </ScrollView>
     </View>
@@ -135,17 +118,6 @@ const styles = StyleSheet.create({
   image: {
     width: '100%',
     height: 400,
-  },
-  favoriteButton: {
-    position: 'absolute',
-    top: 16,
-    right: 16,
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    backgroundColor: 'rgba(0, 0, 0, 0.3)',
-    justifyContent: 'center',
-    alignItems: 'center',
   },
   detailsContainer: {
     borderTopLeftRadius: 24,
@@ -224,28 +196,36 @@ const styles = StyleSheet.create({
     color: '#1F2937',
     paddingHorizontal: 12,
   },
-  addToCartButton: {
+  stockBadge: {
+    backgroundColor: '#DCFCE7',
+    paddingVertical: 6,
+    paddingHorizontal: 12,
+    borderRadius: 8,
+    alignSelf: 'flex-start',
     marginBottom: 16,
   },
-  stockContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  stockIndicator: {
-    width: 8,
-    height: 8,
-    borderRadius: 4,
-    marginRight: 8,
-  },
-  inStock: {
-    backgroundColor: '#10B981',
-  },
-  outOfStock: {
-    backgroundColor: '#EF4444',
-  },
-  stockText: {
+  stockBadgeText: {
     fontSize: 14,
-    color: '#6B7280',
+    fontWeight: '600',
+    color: '#15803D',
+  },
+  addToCartButton: {
+    backgroundColor: '#3B82F6',
+    borderRadius: 12,
+    paddingVertical: 14,
+    alignItems: 'center',
+    marginBottom: 24,
+    marginTop: 4,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 6,
+    elevation: 3,
+  },
+  addToCartText: {
+    color: '#FFFFFF',
+    fontSize: 16,
+    fontWeight: '600',
   },
   notFound: {
     flex: 1,
@@ -260,6 +240,14 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   goBackButton: {
-    minWidth: 120,
+    paddingVertical: 12,
+    paddingHorizontal: 24,
+    backgroundColor: '#3B82F6',
+    borderRadius: 8,
+  },
+  goBackButtonText: {
+    color: '#FFFFFF',
+    fontWeight: '600',
+    fontSize: 16,
   },
 });
