@@ -13,8 +13,11 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function ProductScreen() {
-  const { id } = useLocalSearchParams<{ id: string }>();
   const router = useRouter();
+  const params = useLocalSearchParams();
+  const id = Array.isArray(params.id) ? params.id[0] : params.id;
+
+  
   const [quantity, setQuantity] = useState(1);
 
   const product = getProductById(id);
@@ -206,9 +209,9 @@ const styles = StyleSheet.create({
     marginRight: 16,
   },
   price: {
-    fontSize: 24,
-    fontWeight: "700",
-    color: "#3B82F6",
+    fontSize: 15,
+    fontFamily: "Inter-Bold",
+    color: "#1E3A8A",
   },
   ratingContainer: {
     flexDirection: "row",
@@ -276,7 +279,7 @@ const styles = StyleSheet.create({
     color: "#15803D",
   },
   addToCartButton: {
-    backgroundColor: "#3B82F6",
+    backgroundColor: "#1E3A8A",
     borderRadius: 12,
     paddingVertical: 14,
     alignItems: "center",
@@ -308,7 +311,7 @@ const styles = StyleSheet.create({
   goBackButton: {
     paddingVertical: 12,
     paddingHorizontal: 24,
-    backgroundColor: "#3B82F6",
+    backgroundColor: "#1E3A8A",
     borderRadius: 8,
   },
   goBackButtonText: {

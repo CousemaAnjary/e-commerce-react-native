@@ -16,7 +16,7 @@ const newProducts = products.slice(products.length - 4);
 export default function NewArrivals() {
   const router = useRouter();
 
-  const handlePress = (productId: number) => {
+  const handlePress = (productId: string) => {
     router.push(`/product/${productId}`);
   };
 
@@ -25,7 +25,7 @@ export default function NewArrivals() {
 
 
   const renderProduct = ({ item }: { item: (typeof products)[number] }) => (
-    <TouchableOpacity style={styles.productCard} onPress={() => handlePress(Number(item.id))}>
+    <TouchableOpacity style={styles.productCard} onPress={() => handlePress(item.id)}>
       <Image source={item.image} style={styles.productImage} />
       <View style={styles.productInfo}>
         <Text style={styles.productName} numberOfLines={2}>
