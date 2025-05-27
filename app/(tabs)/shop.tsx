@@ -1,6 +1,6 @@
 import { useCart } from "@/context/CartContext"
 import { useRouter } from "expo-router"
-import React, { useState } from "react"
+import React from "react"
 import { Alert, FlatList, StyleSheet, Text, View } from "react-native"
 
 import CartItem from "@/components/shop/CartItem"
@@ -10,7 +10,6 @@ export default function ShopScreen() {
   const router = useRouter()
   const { items, getCartTotal, clearCart } = useCart()
 
-  const [isCheckingOut] = useState(false)
 
   // Si panier vide
   if (items.length === 0) {
@@ -80,13 +79,10 @@ export default function ShopScreen() {
           <Text style={styles.totalValue}>${getCartTotal().toFixed(2)}</Text>
         </View>
 
-        <Button
-          title="Checkout"
-          size="large"
-          loading={isCheckingOut}
-          fullWidth
-          style={styles.checkoutButton}
-        />
+    
+         <Text style={styles.checkoutButton}>
+         Checkout
+        </Text>
       </View>
     </View>
   )
