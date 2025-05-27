@@ -1,51 +1,53 @@
-import { useCart } from "@/context/CartContext"
-import { useRouter } from "expo-router"
-import React from "react"
-import { Alert, FlatList, StyleSheet, Text, View } from "react-native"
+import { useCart } from "@/context/CartContext";
+import { useRouter } from "expo-router";
+import React from "react";
+import { Alert, FlatList, StyleSheet, Text, View } from "react-native";
+import { ShoppingCart } from "lucide-react-native";
 
-import CartItem from "@/components/shop/CartItem"
-import { ShoppingCart } from "lucide-react-native"
+import CartItem from "@/components/shop/CartItem";
+import Button from "@/components/Button";
+
 
 export default function ShopScreen() {
-  const router = useRouter()
-  const { items, getCartTotal, clearCart } = useCart()
+  const router = useRouter();
+  const { items, getCartTotal, clearCart } = useCart();
 
-
-  // Si panier vide
   if (items.length === 0) {
     return (
       <View style={styles.emptyContainer}>
         <ShoppingCart size={80} color="#D1D5DB" />
-        <Text style={styles.emptyTitle}>Your cart is empty</Text>
+        <Text style={styles.emptyTitle}>Votre panier est vide</Text>
         <Text style={styles.emptyMessage}>
-          Looks like you haven&apos;t added anything to your cart yet.
+          On dirait que vous n&apos;avez encore rien ajouté à votre panier.
         </Text>
-        <Text style={styles.emptyButton} onPress={() => router.push("/(tabs)")}>
-          Start Shopping
-        </Text>
+        <Button
+          title="Commencer vos achats"
+          onPress={() => router.push("/(tabs)")}
+          style={styles.emptyButton}
+        />
       </View>
-    )
+    );
   }
 
   return (
     <View style={styles.container}>
       {/* En-tête */}
       <View style={styles.header}>
-        <Text style={styles.title}>Shopping Cart</Text>
+        <Text style={styles.title}>Panier</Text>
         <Text
           style={styles.clearButton}
           onPress={() => {
             Alert.alert(
-              "Clear Cart",
-              "Are you sure you want to remove all items from your cart?",
+              "Vider le panier",
+              "Voulez-vous vraiment supprimer tous les articles de votre panier ?",
               [
-                { text: "Cancel", style: "cancel" },
-                { text: "Clear", onPress: () => clearCart() },
+                { text: "Annuler", style: "cancel" },
+                { text: "Vider", onPress: () => clearCart() },
               ]
-            )
+            );
           }}
         >
-          Clear All
+          Tout supprimer
         </Text>
       </View>
 
@@ -63,32 +65,37 @@ export default function ShopScreen() {
       {/* Résumé et bouton de paiement */}
       <View style={styles.summaryContainer}>
         <View style={styles.summaryRow}>
-          <Text style={styles.summaryLabel}>Subtotal</Text>
-          <Text style={styles.summaryValue}>${getCartTotal().toFixed(2)}</Text>
+          <Text style={styles.summaryLabel}>Sous-total</Text>
+          <Text style={styles.summaryValue}>
+            {getCartTotal().toFixed(2)} €
+          </Text>
         </View>
 
         <View style={styles.summaryRow}>
-          <Text style={styles.summaryLabel}>Shipping</Text>
-          <Text style={styles.summaryValue}>$0.00</Text>
+          <Text style={styles.summaryLabel}>Livraison</Text>
+          <Text style={styles.summaryValue}>0,00 €</Text>
         </View>
 
         <View style={styles.divider} />
 
         <View style={styles.summaryRow}>
           <Text style={styles.totalLabel}>Total</Text>
-          <Text style={styles.totalValue}>${getCartTotal().toFixed(2)}</Text>
+          <Text style={styles.totalValue}>
+            {getCartTotal().toFixed(2)} €
+          </Text>
         </View>
 
-    
-         <Text style={styles.checkoutButton}>
-         Checkout
-        </Text>
+        <Button
+          title="Passer au paiement"
+          onPress={() => Alert.alert("Paiement", "Fonction à implémenter")}
+          style={styles.checkoutButton}
+          fullWidth
+        />
       </View>
     </View>
-  )
+  );
 }
 
-// Styles
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -180,4 +187,4 @@ const styles = StyleSheet.create({
   emptyButton: {
     minWidth: 160,
   },
-})
+});
