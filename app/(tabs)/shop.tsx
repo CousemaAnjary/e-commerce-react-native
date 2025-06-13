@@ -1,16 +1,15 @@
-import { useCart } from "@/context/CartContext";
-import { useRouter } from "expo-router";
-import React from "react";
-import { Alert, FlatList, StyleSheet, Text, View } from "react-native";
-import { ShoppingCart } from "lucide-react-native";
+import { useCart } from "@/context/CartContext"
+import { useRouter } from "expo-router"
+import { ShoppingCart } from "lucide-react-native"
+import React from "react"
+import { Alert, FlatList, StyleSheet, Text, View } from "react-native"
 
-import CartItem from "@/components/shop/CartItem";
-import Button from "@/components/Button";
-
+import Button from "@/components/Button"
+import CartItem from "@/components/shop/CartItem"
 
 export default function ShopScreen() {
-  const router = useRouter();
-  const { items, getCartTotal, clearCart } = useCart();
+  const router = useRouter()
+  const { items, getCartTotal, clearCart } = useCart()
 
   if (items.length === 0) {
     return (
@@ -44,7 +43,7 @@ export default function ShopScreen() {
                 { text: "Annuler", style: "cancel" },
                 { text: "Vider", onPress: () => clearCart() },
               ]
-            );
+            )
           }}
         >
           Tout supprimer
@@ -66,9 +65,7 @@ export default function ShopScreen() {
       <View style={styles.summaryContainer}>
         <View style={styles.summaryRow}>
           <Text style={styles.summaryLabel}>Sous-total</Text>
-          <Text style={styles.summaryValue}>
-            {getCartTotal().toFixed(2)} €
-          </Text>
+          <Text style={styles.summaryValue}>{getCartTotal().toFixed(2)} €</Text>
         </View>
 
         <View style={styles.summaryRow}>
@@ -80,9 +77,7 @@ export default function ShopScreen() {
 
         <View style={styles.summaryRow}>
           <Text style={styles.totalLabel}>Total</Text>
-          <Text style={styles.totalValue}>
-            {getCartTotal().toFixed(2)} €
-          </Text>
+          <Text style={styles.totalValue}>{getCartTotal().toFixed(2)} €</Text>
         </View>
 
         <Button
@@ -93,7 +88,7 @@ export default function ShopScreen() {
         />
       </View>
     </View>
-  );
+  )
 }
 
 const styles = StyleSheet.create({
@@ -187,4 +182,4 @@ const styles = StyleSheet.create({
   emptyButton: {
     minWidth: 160,
   },
-});
+})
