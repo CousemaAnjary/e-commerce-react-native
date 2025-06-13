@@ -26,7 +26,7 @@ export default function ShopScreen() {
           style={styles.emptyButton}
         />
       </View>
-    );
+    )
   }
 
   return (
