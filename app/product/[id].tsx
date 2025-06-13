@@ -1,3 +1,5 @@
+
+import { useCart } from "@/context/CartContext";
 import { getProductById } from "@/data/products";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { ChevronLeft, Minus, Plus, ShoppingCart, Star } from "lucide-react-native";
@@ -14,6 +16,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function ProductScreen() {
   const router = useRouter();
+  const { addItem } = useCart();
   const params = useLocalSearchParams();
   const id = Array.isArray(params.id) ? params.id[0] : params.id;
 
@@ -44,6 +47,11 @@ export default function ProductScreen() {
     if (quantity > 1) {
       setQuantity((prev) => prev - 1);
     }
+  };
+
+  const handleAddToCart = () => {
+    addItem(product, quantity);
+    router.push("/(tabs)/shop");
   };
 
   return (
@@ -134,6 +142,7 @@ export default function ProductScreen() {
               ]}
               activeOpacity={0.8}
               disabled={!product.inStock}
+              onPress={handleAddToCart}
             >
               <View style={styles.addToCartContent}>
                 <ShoppingCart
@@ -141,7 +150,8 @@ export default function ProductScreen() {
                   color="#FFFFFF"
                   style={{ marginRight: 8 }}
                 />
-                <Text style={styles.addToCartText}>Ajouter au panier</Text>
+                <Text  style={styles.addToCartText}>Ajouter au panier</Text>
+               
               </View>
             </TouchableOpacity>
           </View>
