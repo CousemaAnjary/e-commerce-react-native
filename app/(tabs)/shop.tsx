@@ -473,7 +473,7 @@ const styles = StyleSheet.create({
   promoSection: {
     backgroundColor: "#FFFFFF",
     marginHorizontal: 16,
-    marginBottom: 26,
+    marginBottom: 20,
     borderRadius: 12,
     padding: 16,
     shadowColor: "#000",
@@ -555,6 +555,7 @@ const styles = StyleSheet.create({
     borderTopLeftRadius: 24,
     borderTopRightRadius: 24,
     padding: 20,
+    paddingBottom: 120,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: -4 },
     shadowOpacity: 0.1,
@@ -734,6 +735,6 @@ const styles = StyleSheet.create({
   },
   cartItemsSection: {
     marginHorizontal: 16,
-    marginBottom: -140,
+    marginTop: -170,
   },
 })
