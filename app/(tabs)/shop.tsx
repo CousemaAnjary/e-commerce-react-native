@@ -1,14 +1,21 @@
 import { useCart } from "@/context/CartContext"
 import { useRouter } from "expo-router"
-import { Gift, Percent, ShoppingCart } from "lucide-react-native"
+import {
+  ChevronDown,
+  ChevronUp,
+  Eye,
+  Gift,
+  Percent,
+  ShoppingCart,
+} from "lucide-react-native"
 import React, { useCallback, useMemo, useState } from "react"
 import {
   Alert,
   Animated,
   Dimensions,
-  FlatList,
   Platform,
   RefreshControl,
+  ScrollView,
   StyleSheet,
   Text,
   TextInput,
@@ -18,6 +25,7 @@ import {
 
 import Button from "@/components/Button"
 import CartItem from "@/components/shop/CartItem"
+import OrderSummaryItem from "@/components/shop/OrderSummaryItem"
 import PromoCodeHint from "@/components/shop/PromoCodeHint"
 
 export default function ShopScreen() {
@@ -27,11 +35,27 @@ export default function ShopScreen() {
   // États locaux pour les fonctionnalités améliorées
   const [promoCode, setPromoCode] = useState("")
   const [promoDiscount, setPromoDiscount] = useState(0)
-  const [isRefreshing, setIsRefreshing] = useState(false)
   const [isCheckingOut, setIsCheckingOut] = useState(false)
+  const [showOrderSummary, setShowOrderSummary] = useState(true)
+  const [isRefreshing, setIsRefreshing] = useState(false)
 
   // Animation pour le panier vide
   const fadeAnim = useMemo(() => new Animated.Value(0), [])
+
+  // Animation pour le récapitulatif
+  const summaryAnim = useMemo(() => new Animated.Value(1), [])
+
+  // Gestion de l'animation du récapitulatif
+  const toggleSummary = useCallback(() => {
+    const toValue = showOrderSummary ? 0 : 1
+    setShowOrderSummary(!showOrderSummary)
+
+    Animated.timing(summaryAnim, {
+      toValue,
+      duration: 300,
+      useNativeDriver: false,
+    }).start()
+  }, [showOrderSummary, summaryAnim])
 
   // Codes promotionnels simulés
   const promoCodes = useMemo(
@@ -135,7 +159,7 @@ export default function ShopScreen() {
 
   return (
     <View style={styles.container}>
-      {/* En-tête amélioré */}
+      {/* En-tête fixe */}
       <View style={styles.header}>
         <View>
           <Text style={styles.title}>Panier</Text>
@@ -166,32 +190,10 @@ export default function ShopScreen() {
         </TouchableOpacity>
       </View>
 
-      {/* Liste des articles avec refresh */}
-      <FlatList
-        data={items}
-        renderItem={({ item, index }) => (
-          <Animated.View
-            style={[
-              styles.cartItemContainer,
-              {
-                opacity: 1,
-                transform: [
-                  {
-                    translateY: new Animated.Value(50).interpolate({
-                      inputRange: [0, 1],
-                      outputRange: [50, 0],
-                    }),
-                  },
-                ],
-              },
-            ]}
-          >
-            <CartItem product={item.product} quantity={item.quantity} />
-          </Animated.View>
-        )}
-        keyExtractor={(item) => item.product.id}
-        contentContainerStyle={styles.cartItems}
+      <ScrollView
+        style={styles.scrollContainer}
         showsVerticalScrollIndicator={false}
+        contentContainerStyle={styles.scrollContent}
         refreshControl={
           <RefreshControl
             refreshing={isRefreshing}
@@ -200,106 +202,216 @@ export default function ShopScreen() {
             colors={["#3B82F6"]}
           />
         }
-        removeClippedSubviews={true}
-        maxToRenderPerBatch={10}
-        windowSize={10}
-      />
-
-      {/* Section code promo */}
-      <View style={styles.promoSection}>
-        <View style={styles.promoHeader}>
-          <Gift size={20} />
-          <Text style={styles.promoTitle}>Code promotionnel</Text>
-        </View>
-
-        {promoDiscount > 0 ? (
-          <View style={styles.appliedPromoContainer}>
-            <View style={styles.appliedPromoInfo}>
-              <Percent size={16} />
-              <Text style={styles.appliedPromoText}>
-                {promoCode} (-{(promoDiscount * 100).toFixed(0)}%)
+      >
+        {/* Récapitulatif de commande */}
+        <View style={styles.orderSummaryCard}>
+          <TouchableOpacity
+            style={styles.orderSummaryHeader}
+            onPress={toggleSummary}
+            activeOpacity={0.7}
+          >
+            <View style={styles.orderSummaryTitleContainer}>
+              <Eye size={20} />
+              <Text style={styles.orderSummaryTitle}>
+                Récapitulatif de votre commande
               </Text>
             </View>
-            <TouchableOpacity onPress={removePromoCode}>
-              <Text style={styles.removePromoText}>Supprimer</Text>
-            </TouchableOpacity>
-          </View>
-        ) : (
-          <View style={styles.promoInputContainer}>
-            <TextInput
-              style={styles.promoInput}
-              placeholder="Entrez votre code"
-              value={promoCode}
-              onChangeText={setPromoCode}
-              autoCapitalize="characters"
-              returnKeyType="done"
-              onSubmitEditing={applyPromoCode}
-            />
-            <TouchableOpacity
+            {showOrderSummary ? (
+              <ChevronUp size={20} />
+            ) : (
+              <ChevronDown size={20} />
+            )}
+          </TouchableOpacity>
+
+          {showOrderSummary && (
+            <Animated.View
               style={[
-                styles.applyPromoButton,
-                !promoCode.trim() && styles.applyPromoButtonDisabled,
+                styles.orderSummaryContent,
+                {
+                  opacity: summaryAnim,
+                  maxHeight: summaryAnim.interpolate({
+                    inputRange: [0, 1],
+                    outputRange: [0, 1000],
+                  }),
+                },
               ]}
-              onPress={applyPromoCode}
-              disabled={!promoCode.trim()}
             >
-              <Text
+              <View style={styles.orderSummaryDivider} />
+              {items.map((item, index) => (
+                <OrderSummaryItem
+                  key={item.product.id}
+                  product={item.product}
+                  quantity={item.quantity}
+                />
+              ))}
+
+              {/* Mini résumé dans le récapitulatif */}
+              <View style={styles.miniSummary}>
+                <View style={styles.miniSummaryRow}>
+                  <Text style={styles.miniSummaryLabel}>Sous-total</Text>
+                  <Text style={styles.miniSummaryValue}>
+                    {subtotal.toFixed(2)} €
+                  </Text>
+                </View>
+                {promoDiscount > 0 && (
+                  <View style={styles.miniSummaryRow}>
+                    <Text style={styles.miniSummaryLabel}>Réduction</Text>
+                    <Text style={styles.miniSummaryDiscount}>
+                      -{discount.toFixed(2)} €
+                    </Text>
+                  </View>
+                )}
+                <View style={styles.miniSummaryRow}>
+                  <Text style={styles.miniSummaryLabel}>Livraison</Text>
+                  <Text
+                    style={[
+                      styles.miniSummaryValue,
+                      shipping === 0 && styles.freeShippingMini,
+                    ]}
+                  >
+                    {shipping === 0 ? "Gratuite" : `${shipping.toFixed(2)} €`}
+                  </Text>
+                </View>
+                <View style={styles.miniSummaryDivider} />
+                <View style={styles.miniSummaryRow}>
+                  <Text style={styles.miniSummaryTotalLabel}>
+                    Total à payer
+                  </Text>
+                  <Text style={styles.miniSummaryTotalValue}>
+                    {total.toFixed(2)} €
+                  </Text>
+                </View>
+              </View>
+            </Animated.View>
+          )}
+        </View>
+
+        {/* Liste des articles */}
+        <View style={styles.cartItemsSection}>
+          {items.map((item, index) => (
+            <Animated.View
+              key={item.product.id}
+              style={[
+                styles.cartItemContainer,
+                {
+                  opacity: 1,
+                  transform: [
+                    {
+                      translateY: new Animated.Value(50).interpolate({
+                        inputRange: [0, 1],
+                        outputRange: [50, 0],
+                      }),
+                    },
+                  ],
+                },
+              ]}
+            >
+              <CartItem product={item.product} quantity={item.quantity} />
+            </Animated.View>
+          ))}
+        </View>
+
+        {/* Section code promo */}
+        <View style={styles.promoSection}>
+          <View style={styles.promoHeader}>
+            <Gift size={20} />
+            <Text style={styles.promoTitle}>Code promotionnel</Text>
+          </View>
+
+          {promoDiscount > 0 ? (
+            <View style={styles.appliedPromoContainer}>
+              <View style={styles.appliedPromoInfo}>
+                <Percent size={16} />
+                <Text style={styles.appliedPromoText}>
+                  {promoCode} (-{(promoDiscount * 100).toFixed(0)}%)
+                </Text>
+              </View>
+              <TouchableOpacity onPress={removePromoCode}>
+                <Text style={styles.removePromoText}>Supprimer</Text>
+              </TouchableOpacity>
+            </View>
+          ) : (
+            <View style={styles.promoInputContainer}>
+              <TextInput
+                style={styles.promoInput}
+                placeholder="Entrez votre code"
+                value={promoCode}
+                onChangeText={setPromoCode}
+                autoCapitalize="characters"
+                returnKeyType="done"
+                onSubmitEditing={applyPromoCode}
+              />
+              <TouchableOpacity
                 style={[
-                  styles.applyPromoButtonText,
-                  !promoCode.trim() && styles.applyPromoButtonTextDisabled,
+                  styles.applyPromoButton,
+                  !promoCode.trim() && styles.applyPromoButtonDisabled,
                 ]}
+                onPress={applyPromoCode}
+                disabled={!promoCode.trim()}
               >
-                Appliquer
-              </Text>
-            </TouchableOpacity>
-          </View>
-        )}
+                <Text
+                  style={[
+                    styles.applyPromoButtonText,
+                    !promoCode.trim() && styles.applyPromoButtonTextDisabled,
+                  ]}
+                >
+                  Appliquer
+                </Text>
+              </TouchableOpacity>
+            </View>
+          )}
 
-        <PromoCodeHint onCodeSelect={setPromoCode} />
-      </View>
-
-      {/* Résumé détaillé */}
-      <View style={styles.summaryContainer}>
-        <View style={styles.summaryRow}>
-          <Text style={styles.summaryLabel}>Sous-total</Text>
-          <Text style={styles.summaryValue}>{subtotal.toFixed(2)} €</Text>
+          <PromoCodeHint onCodeSelect={setPromoCode} />
         </View>
 
-        <View style={styles.summaryRow}>
-          <Text style={styles.summaryLabel}>
-            Livraison {subtotal > 50 && "(Gratuite dès 50€)"}
-          </Text>
-          <Text
-            style={[styles.summaryValue, shipping === 0 && styles.freeShipping]}
-          >
-            {shipping === 0 ? "Gratuite" : `${shipping.toFixed(2)} €`}
-          </Text>
-        </View>
-
-        {promoDiscount > 0 && (
+        {/* Résumé détaillé */}
+        <View style={styles.summaryContainer}>
           <View style={styles.summaryRow}>
-            <Text style={styles.summaryLabel}>Réduction</Text>
-            <Text style={styles.discountValue}>-{discount.toFixed(2)} €</Text>
+            <Text style={styles.summaryLabel}>Sous-total</Text>
+            <Text style={styles.summaryValue}>{subtotal.toFixed(2)} €</Text>
           </View>
-        )}
 
-        <View style={styles.divider} />
+          <View style={styles.summaryRow}>
+            <Text style={styles.summaryLabel}>
+              Livraison {subtotal > 50 && "(Gratuite dès 50€)"}
+            </Text>
+            <Text
+              style={[
+                styles.summaryValue,
+                shipping === 0 && styles.freeShipping,
+              ]}
+            >
+              {shipping === 0 ? "Gratuite" : `${shipping.toFixed(2)} €`}
+            </Text>
+          </View>
 
-        <View style={styles.summaryRow}>
-          <Text style={styles.totalLabel}>Total</Text>
-          <Text style={styles.totalValue}>{total.toFixed(2)} €</Text>
+          {promoDiscount > 0 && (
+            <View style={styles.summaryRow}>
+              <Text style={styles.summaryLabel}>Réduction</Text>
+              <Text style={styles.discountValue}>-{discount.toFixed(2)} €</Text>
+            </View>
+          )}
+
+          <View style={styles.divider} />
+
+          <View style={styles.summaryRow}>
+            <Text style={styles.totalLabel}>Total</Text>
+            <Text style={styles.totalValue}>{total.toFixed(2)} €</Text>
+          </View>
+
+          <Button
+            title={isCheckingOut ? "Traitement..." : "Passer au paiement"}
+            onPress={handleCheckout}
+            style={styles.checkoutButton}
+            disabled={isCheckingOut}
+            fullWidth
+          />
+
+          <Text style={styles.securePaymentText}>
+            🔒 Paiement 100% sécurisé
+          </Text>
         </View>
-
-        <Button
-          title={isCheckingOut ? "Traitement..." : "Passer au paiement"}
-          onPress={handleCheckout}
-          style={styles.checkoutButton}
-          disabled={isCheckingOut}
-          fullWidth
-        />
-
-        <Text style={styles.securePaymentText}>🔒 Paiement 100% sécurisé</Text>
-      </View>
+      </ScrollView>
     </View>
   )
 }
@@ -310,6 +422,12 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#F9FAFB",
+  },
+  scrollContainer: {
+    flex: 1,
+  },
+  scrollContent: {
+    flexGrow: 1,
   },
   header: {
     flexDirection: "row",
@@ -324,6 +442,8 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1,
     shadowRadius: 4,
     elevation: 3,
+    position: "relative",
+    zIndex: 10,
   },
   title: {
     fontSize: 28,
@@ -346,11 +466,8 @@ const styles = StyleSheet.create({
     color: "#EF4444",
     fontWeight: "600",
   },
-  cartItems: {
-    padding: 16,
-  },
   cartItemContainer: {
-    marginBottom: 8,
+    marginBottom: 6,
   },
   promoSection: {
     backgroundColor: "#FFFFFF",
@@ -529,5 +646,92 @@ const styles = StyleSheet.create({
   emptyButton: {
     minWidth: 200,
     paddingVertical: 14,
+  },
+  // Nouveaux styles pour le récapitulatif de commande
+  orderSummaryCard: {
+    backgroundColor: "#FFFFFF",
+    marginHorizontal: 16,
+    marginTop: 8,
+    marginBottom: 16,
+    borderRadius: 16,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.08,
+    shadowRadius: 8,
+    elevation: 3,
+    borderWidth: 1,
+    borderColor: "#E2E8F0",
+  },
+  orderSummaryHeader: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    padding: 16,
+  },
+  orderSummaryTitleContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  orderSummaryTitle: {
+    fontSize: 16,
+    fontWeight: "700",
+    color: "#1F2937",
+    marginLeft: 8,
+  },
+  orderSummaryContent: {
+    paddingHorizontal: 16,
+    paddingBottom: 12,
+  },
+  orderSummaryDivider: {
+    height: 1,
+    backgroundColor: "#E5E7EB",
+    marginBottom: 12,
+  },
+  miniSummary: {
+    marginTop: 12,
+    padding: 12,
+    backgroundColor: "#F8FAFC",
+    borderRadius: 8,
+  },
+  miniSummaryRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    marginBottom: 6,
+  },
+  miniSummaryLabel: {
+    fontSize: 13,
+    color: "#6B7280",
+  },
+  miniSummaryValue: {
+    fontSize: 13,
+    fontWeight: "600",
+    color: "#1F2937",
+  },
+  miniSummaryDiscount: {
+    fontSize: 13,
+    fontWeight: "600",
+    color: "#10B981",
+  },
+  freeShippingMini: {
+    color: "#10B981",
+    fontWeight: "700",
+  },
+  miniSummaryDivider: {
+    height: 1,
+    backgroundColor: "#E5E7EB",
+    marginVertical: 8,
+  },
+  miniSummaryTotalLabel: {
+    fontSize: 14,
+    fontWeight: "700",
+    color: "#1F2937",
+  },
+  miniSummaryTotalValue: {
+    fontSize: 16,
+    fontWeight: "800",
+    color: "#3B82F6",
+  },
+  cartItemsSection: {
+    marginHorizontal: 16,
   },
 })
