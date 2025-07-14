@@ -1,6 +1,6 @@
 import { useAuth } from "@/context/AuthContext"
 import { router } from "expo-router"
-import { Eye, EyeOff, Lock, Mail } from "lucide-react-native"
+import { ArrowLeft, Eye, EyeOff, Lock, Mail } from "lucide-react-native"
 import React, { useState } from "react"
 import {
   ActivityIndicator,
@@ -58,12 +58,26 @@ export default function LoginScreen() {
     router.push("/auth/register" as any)
   }
 
+  const goBack = () => {
+    router.back()
+  }
+
+  const fillDemoCredentials = () => {
+    setEmail("demo@example.com")
+    setPassword("password")
+  }
+
   return (
     <SafeAreaView style={styles.container}>
       <KeyboardAvoidingView
         behavior={Platform.OS === "ios" ? "padding" : "height"}
         style={styles.keyboardView}
       >
+        {/* Back Button */}
+        <TouchableOpacity style={styles.backButton} onPress={goBack}>
+          <ArrowLeft size={24} color="#1E293B" />
+        </TouchableOpacity>
+
         <ScrollView
           contentContainerStyle={styles.scrollContainer}
           showsVerticalScrollIndicator={false}
@@ -75,22 +89,29 @@ export default function LoginScreen() {
           </View>
 
           {/* Demo Info */}
-          <View style={styles.demoInfo}>
+          <TouchableOpacity
+            style={styles.demoInfo}
+            onPress={fillDemoCredentials}
+          >
             <Text style={styles.demoText}>
               🎯 <Text style={styles.demoBold}>Compte démo :</Text>{" "}
               demo@example.com / password
             </Text>
-          </View>
+            <Text style={styles.demoSubtext}>
+              Appuyez ici pour remplir automatiquement
+            </Text>
+          </TouchableOpacity>
 
           {/* Form */}
           <View style={styles.form}>
             {/* Email Input */}
             <View style={styles.inputContainer}>
+              <Text style={styles.inputLabel}>Adresse email</Text>
               <View style={styles.inputWrapper}>
                 <Mail size={20} color="#64748B" style={styles.inputIcon} />
                 <TextInput
                   style={styles.input}
-                  placeholder="Adresse email"
+                  placeholder="Entrez votre email"
                   placeholderTextColor="#94A3B8"
                   value={email}
                   onChangeText={setEmail}
@@ -103,11 +124,12 @@ export default function LoginScreen() {
 
             {/* Password Input */}
             <View style={styles.inputContainer}>
+              <Text style={styles.inputLabel}>Mot de passe</Text>
               <View style={styles.inputWrapper}>
                 <Lock size={20} color="#64748B" style={styles.inputIcon} />
                 <TextInput
                   style={styles.input}
-                  placeholder="Mot de passe"
+                  placeholder="Entrez votre mot de passe"
                   placeholderTextColor="#94A3B8"
                   value={password}
                   onChangeText={setPassword}
@@ -115,8 +137,8 @@ export default function LoginScreen() {
                   autoCapitalize="none"
                 />
                 <TouchableOpacity
+                  style={styles.eyeButton}
                   onPress={() => setShowPassword(!showPassword)}
-                  style={styles.eyeIcon}
                 >
                   {showPassword ? (
                     <EyeOff size={20} color="#64748B" />
@@ -128,7 +150,12 @@ export default function LoginScreen() {
             </View>
 
             {/* Forgot Password */}
-            <TouchableOpacity style={styles.forgotPassword}>
+            <TouchableOpacity
+              style={styles.forgotPassword}
+              onPress={() =>
+                Alert.alert("Info", "Fonctionnalité bientôt disponible")
+              }
+            >
               <Text style={styles.forgotPasswordText}>
                 Mot de passe oublié ?
               </Text>
@@ -144,7 +171,10 @@ export default function LoginScreen() {
               disabled={isLoading}
             >
               {isLoading ? (
-                <ActivityIndicator color="#FFFFFF" size="small" />
+                <View style={styles.loadingContainer}>
+                  <ActivityIndicator size="small" color="#FFFFFF" />
+                  <Text style={styles.loadingText}>Connexion...</Text>
+                </View>
               ) : (
                 <Text style={styles.loginButtonText}>Se connecter</Text>
               )}
@@ -161,7 +191,7 @@ export default function LoginScreen() {
             <View style={styles.registerContainer}>
               <Text style={styles.registerText}>Pas encore de compte ? </Text>
               <TouchableOpacity onPress={goToRegister}>
-                <Text style={styles.registerLink}>S&apos;inscrire</Text>
+                <Text style={styles.registerLink}>Créer un compte</Text>
               </TouchableOpacity>
             </View>
           </View>
@@ -179,50 +209,77 @@ const styles = StyleSheet.create({
   keyboardView: {
     flex: 1,
   },
+  backButton: {
+    position: "absolute",
+    top: 60,
+    left: 20,
+    zIndex: 1,
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: "#F1F5F9",
+    justifyContent: "center",
+    alignItems: "center",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
+  },
   scrollContainer: {
     flexGrow: 1,
-    justifyContent: "center",
     paddingHorizontal: 24,
-    paddingVertical: 32,
+    paddingTop: 120,
+    paddingBottom: 40,
   },
   header: {
+    marginBottom: 32,
     alignItems: "center",
-    marginBottom: 24,
   },
   title: {
     fontSize: 32,
     fontWeight: "800",
     color: "#1E293B",
     marginBottom: 8,
-    letterSpacing: -1,
   },
   subtitle: {
     fontSize: 16,
     color: "#64748B",
     textAlign: "center",
-    lineHeight: 24,
   },
   demoInfo: {
-    backgroundColor: "#F1F5F9",
+    backgroundColor: "#FEF3C7",
     padding: 16,
     borderRadius: 12,
     marginBottom: 32,
-    borderLeftWidth: 4,
-    borderLeftColor: "#3B82F6",
+    borderWidth: 1,
+    borderColor: "#FCD34D",
   },
   demoText: {
     fontSize: 14,
-    color: "#475569",
+    color: "#92400E",
     textAlign: "center",
+    marginBottom: 4,
   },
   demoBold: {
     fontWeight: "700",
-    color: "#1E293B",
+  },
+  demoSubtext: {
+    fontSize: 12,
+    color: "#A16207",
+    textAlign: "center",
+    fontStyle: "italic",
   },
   form: {
-    gap: 16,
+    gap: 20,
   },
   inputContainer: {
+    marginBottom: 4,
+  },
+  inputLabel: {
+    fontSize: 14,
+    fontWeight: "600",
+    color: "#374151",
     marginBottom: 8,
   },
   inputWrapper: {
@@ -230,10 +287,10 @@ const styles = StyleSheet.create({
     alignItems: "center",
     backgroundColor: "#F8FAFC",
     borderRadius: 16,
+    paddingHorizontal: 16,
+    paddingVertical: 4,
     borderWidth: 1,
     borderColor: "#E2E8F0",
-    paddingHorizontal: 16,
-    height: 56,
   },
   inputIcon: {
     marginRight: 12,
@@ -242,14 +299,14 @@ const styles = StyleSheet.create({
     flex: 1,
     fontSize: 16,
     color: "#1E293B",
-    height: "100%",
+    paddingVertical: 16,
   },
-  eyeIcon: {
+  eyeButton: {
     padding: 4,
   },
   forgotPassword: {
     alignSelf: "flex-end",
-    marginBottom: 8,
+    marginTop: -8,
   },
   forgotPasswordText: {
     fontSize: 14,
@@ -258,24 +315,33 @@ const styles = StyleSheet.create({
   },
   loginButton: {
     backgroundColor: "#3B82F6",
+    paddingVertical: 18,
     borderRadius: 16,
-    height: 56,
     alignItems: "center",
-    justifyContent: "center",
+    marginTop: 12,
     shadowColor: "#3B82F6",
     shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.2,
+    shadowOpacity: 0.3,
     shadowRadius: 8,
-    elevation: 4,
+    elevation: 6,
   },
   loginButtonDisabled: {
     opacity: 0.7,
+  },
+  loadingContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8,
+  },
+  loadingText: {
+    fontSize: 16,
+    fontWeight: "700",
+    color: "#FFFFFF",
   },
   loginButtonText: {
     fontSize: 16,
     fontWeight: "700",
     color: "#FFFFFF",
-    letterSpacing: 0.5,
   },
   divider: {
     flexDirection: "row",
@@ -291,12 +357,11 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: "#64748B",
     marginHorizontal: 16,
-    fontWeight: "500",
   },
   registerContainer: {
     flexDirection: "row",
     justifyContent: "center",
-    alignItems: "center",
+    marginTop: 8,
   },
   registerText: {
     fontSize: 14,
@@ -304,7 +369,7 @@ const styles = StyleSheet.create({
   },
   registerLink: {
     fontSize: 14,
+    fontWeight: "600",
     color: "#3B82F6",
-    fontWeight: "700",
   },
 })
