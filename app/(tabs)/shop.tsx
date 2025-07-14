@@ -293,6 +293,7 @@ export default function ShopScreen() {
               key={item.product.id}
               style={[
                 styles.cartItemContainer,
+                index === items.length - 1 && { marginBottom: 0 },
                 {
                   opacity: 1,
                   transform: [
@@ -427,7 +428,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   scrollContent: {
-    flexGrow: 1,
+    paddingBottom: 0,
   },
   header: {
     flexDirection: "row",
@@ -467,12 +468,12 @@ const styles = StyleSheet.create({
     fontWeight: "600",
   },
   cartItemContainer: {
-    marginBottom: 6,
+    marginBottom: 4,
   },
   promoSection: {
     backgroundColor: "#FFFFFF",
     marginHorizontal: 16,
-    marginBottom: 16,
+    marginBottom: 26,
     borderRadius: 12,
     padding: 16,
     shadowColor: "#000",
@@ -733,5 +734,6 @@ const styles = StyleSheet.create({
   },
   cartItemsSection: {
     marginHorizontal: 16,
+    marginBottom: -140,
   },
 })
