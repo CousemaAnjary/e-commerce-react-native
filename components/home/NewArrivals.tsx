@@ -5,7 +5,6 @@ import { Heart, Plus, Star } from "lucide-react-native"
 import React, { useState } from "react"
 import {
   Alert,
-  FlatList,
   Image,
   StyleSheet,
   Text,
@@ -45,8 +44,9 @@ export default function NewArrivals() {
     return `${price.toFixed(2)} €`
   }
 
-  const renderProduct = ({ item }: { item: (typeof products)[number] }) => (
+  const renderProduct = (item: (typeof products)[number]) => (
     <TouchableOpacity
+      key={item.id}
       style={styles.productCard}
       onPress={() => handlePress(item.id)}
     >
@@ -93,17 +93,22 @@ export default function NewArrivals() {
     </TouchableOpacity>
   )
 
-  return (
-    <View style={styles.container}>
-      <FlatList
-        data={newProducts}
-        renderItem={renderProduct}
-        keyExtractor={(item) => item.id.toString()}
-        numColumns={2}
-        columnWrapperStyle={styles.row}
-      />
-    </View>
-  )
+  // Organiser les produits en lignes de 2
+  const renderProductGrid = () => {
+    const rows = []
+    for (let i = 0; i < newProducts.length; i += 2) {
+      const rowItems = newProducts.slice(i, i + 2)
+      rows.push(
+        <View key={i} style={styles.row}>
+          {rowItems.map(renderProduct)}
+          {rowItems.length === 1 && <View style={styles.emptySlot} />}
+        </View>
+      )
+    }
+    return rows
+  }
+
+  return <View style={styles.container}>{renderProductGrid()}</View>
 }
 
 const styles = StyleSheet.create({
@@ -111,8 +116,12 @@ const styles = StyleSheet.create({
     width: "100%",
   },
   row: {
+    flexDirection: "row",
     justifyContent: "space-between",
     marginBottom: 20,
+  },
+  emptySlot: {
+    width: "48%",
   },
   productCard: {
     width: "48%",

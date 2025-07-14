@@ -5,7 +5,6 @@ import { ChevronRight, Heart, Shield, Star, Truck } from "lucide-react-native"
 import React, { useRef, useState } from "react"
 import {
   Animated,
-  FlatList,
   Image,
   ScrollView,
   StyleSheet,
@@ -80,28 +79,6 @@ export default function HomeScreen() {
     }).start()
   }, [fadeAnim])
 
-  const renderFeaturedProduct = ({ item }: { item: any }) => (
-    <TouchableOpacity style={styles.featuredCard}>
-      <View style={styles.discountBadge}>
-        <Text style={styles.discountText}>-{item.discount}</Text>
-      </View>
-      <Image source={item.image} style={styles.featuredImage} />
-      <View style={styles.featuredContent}>
-        <Text style={styles.featuredName} numberOfLines={1}>
-          {item.name}
-        </Text>
-        <View style={styles.ratingContainer}>
-          <Star size={12} />
-          <Text style={styles.ratingText}>{item.rating}</Text>
-        </View>
-        <View style={styles.priceContainer}>
-          <Text style={styles.currentPrice}>{item.price}€</Text>
-          <Text style={styles.originalPrice}>{item.originalPrice}€</Text>
-        </View>
-      </View>
-    </TouchableOpacity>
-  )
-
   return (
     <SafeAreaView style={styles.container}>
       <SearchHeader />
@@ -135,14 +112,40 @@ export default function HomeScreen() {
             </TouchableOpacity>
           </View>
 
-          <FlatList
-            data={featuredProducts}
-            renderItem={renderFeaturedProduct}
+          <ScrollView
             horizontal
             showsHorizontalScrollIndicator={false}
             contentContainerStyle={styles.featuredList}
-            ItemSeparatorComponent={() => <View style={{ width: 12 }} />}
-          />
+          >
+            {featuredProducts.map((item, index) => (
+              <View key={item.id} style={styles.featuredCardWrapper}>
+                <TouchableOpacity style={styles.featuredCard}>
+                  <View style={styles.discountBadge}>
+                    <Text style={styles.discountText}>-{item.discount}</Text>
+                  </View>
+                  <Image source={item.image} style={styles.featuredImage} />
+                  <View style={styles.featuredContent}>
+                    <Text style={styles.featuredName} numberOfLines={1}>
+                      {item.name}
+                    </Text>
+                    <View style={styles.ratingContainer}>
+                      <Star size={12} />
+                      <Text style={styles.ratingText}>{item.rating}</Text>
+                    </View>
+                    <View style={styles.priceContainer}>
+                      <Text style={styles.currentPrice}>{item.price}€</Text>
+                      <Text style={styles.originalPrice}>
+                        {item.originalPrice}€
+                      </Text>
+                    </View>
+                  </View>
+                </TouchableOpacity>
+                {index < featuredProducts.length - 1 && (
+                  <View style={styles.itemSeparator} />
+                )}
+              </View>
+            ))}
+          </ScrollView>
         </View>
 
         {/* Section nouveautés améliorée */}
@@ -222,6 +225,10 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingVertical: 8,
   },
+  featuredCardWrapper: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
   featuredCard: {
     width: 170,
     backgroundColor: "#FFFFFF",
@@ -232,6 +239,9 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.12,
     shadowRadius: 12,
     elevation: 6,
+  },
+  itemSeparator: {
+    width: 12,
   },
   discountBadge: {
     position: "absolute",
