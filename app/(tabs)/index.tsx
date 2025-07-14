@@ -53,17 +53,17 @@ export default function HomeScreen() {
 
   const features = [
     {
-      icon: <Truck size={24} />,
+      icon: <Truck size={24} color="#FFFFFF" />,
       title: "Livraison gratuite",
       subtitle: "Dès 50€ d'achat",
     },
     {
-      icon: <Shield size={24} />,
+      icon: <Shield size={24} color="#FFFFFF" />,
       title: "Paiement sécurisé",
       subtitle: "100% sécurisé",
     },
     {
-      icon: <Heart size={24} />,
+      icon: <Heart size={24} color="#FFFFFF" />,
       title: "Service client",
       subtitle: "7j/7 disponible",
     },
