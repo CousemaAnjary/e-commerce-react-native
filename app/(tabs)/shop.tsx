@@ -1,3 +1,4 @@
+import { useAuth } from "@/context/AuthContext"
 import { useCart } from "@/context/CartContext"
 import { useRouter } from "expo-router"
 import {
@@ -5,8 +6,10 @@ import {
   ChevronUp,
   Eye,
   Gift,
+  Lock,
   Percent,
   ShoppingCart,
+  User,
 } from "lucide-react-native"
 import React, { useCallback, useMemo, useState } from "react"
 import {
@@ -31,6 +34,7 @@ import PromoCodeHint from "@/components/shop/PromoCodeHint"
 export default function ShopScreen() {
   const router = useRouter()
   const { items, getCartTotal, clearCart, getItemsCount } = useCart()
+  const { isAuthenticated } = useAuth()
 
   // États locaux pour les fonctionnalités améliorées
   const [promoCode, setPromoCode] = useState("")
@@ -57,23 +61,20 @@ export default function ShopScreen() {
     }).start()
   }, [showOrderSummary, summaryAnim])
 
-  // Codes promotionnels simulés
+  // Codes promo disponibles
   const promoCodes = useMemo(
-    (): Record<string, number> => ({
-      WELCOME10: 0.1,
-      SAVE20: 0.2,
-      FIRST15: 0.15,
+    () => ({
+      BIENVENUE10: { discount: 10, label: "10% de réduction" },
+      SAVE20: { discount: 20, label: "20% de réduction" },
+      FIRST15: { discount: 15, label: "15% première commande" },
+      STUDENT: { discount: 25, label: "25% étudiants" },
+      BLACKFRIDAY: { discount: 30, label: "30% Black Friday" },
+      VIP: { discount: 40, label: "40% membres VIP" },
     }),
     []
   )
 
-  // Calculer les totaux avec réduction
-  const subtotal = getCartTotal()
-  const shipping = subtotal > 50 ? 0 : 5.99
-  const discount = subtotal * promoDiscount
-  const total = subtotal - discount + shipping
-
-  // Gestion du refresh
+  // Fonction de rafraîchissement
   const onRefresh = useCallback(() => {
     setIsRefreshing(true)
     setTimeout(() => setIsRefreshing(false), 1000)
@@ -81,28 +82,37 @@ export default function ShopScreen() {
 
   // Application du code promo
   const applyPromoCode = useCallback(() => {
-    const upperCode = promoCode.toUpperCase()
-    if (promoCodes[upperCode]) {
-      setPromoDiscount(promoCodes[upperCode])
+    const upperPromoCode = promoCode.toUpperCase()
+    if (promoCodes[upperPromoCode as keyof typeof promoCodes]) {
+      const discount =
+        promoCodes[upperPromoCode as keyof typeof promoCodes].discount
+      setPromoDiscount(discount)
       Alert.alert(
         "Code promo appliqué !",
-        `Vous économisez ${(promoCodes[upperCode] * 100).toFixed(
-          0
-        )}% sur votre commande`
+        `Vous bénéficiez de ${discount}% de réduction.`,
+        [{ text: "Super !", style: "default" }]
       )
     } else {
-      Alert.alert(
-        "Code invalide",
-        "Ce code promotionnel n'existe pas ou a expiré"
-      )
+      Alert.alert("Code invalide", "Ce code promo n'existe pas ou a expiré.", [
+        { text: "OK", style: "default" },
+      ])
     }
   }, [promoCode, promoCodes])
 
   // Suppression du code promo
   const removePromoCode = useCallback(() => {
-    setPromoCode("")
     setPromoDiscount(0)
+    setPromoCode("")
+    Alert.alert("Code promo supprimé", "La réduction a été annulée.", [
+      { text: "OK", style: "default" },
+    ])
   }, [])
+
+  // Calculer les totaux avec réduction
+  const subtotal = getCartTotal()
+  const shipping = subtotal > 50 ? 0 : 5.99
+  const discount = subtotal * (promoDiscount / 100)
+  const total = subtotal - discount + shipping
 
   // Gestion du checkout
   const handleCheckout = useCallback(async () => {
@@ -134,6 +144,31 @@ export default function ShopScreen() {
       }).start()
     }
   }, [items.length, fadeAnim])
+
+  // Redirection si non authentifié
+  if (!isAuthenticated) {
+    return (
+      <View style={styles.authRequired}>
+        <View style={styles.authContent}>
+          <View style={styles.authIcon}>
+            <Lock size={48} color="#64748B" />
+          </View>
+          <Text style={styles.authTitle}>Authentification requise</Text>
+          <Text style={styles.authMessage}>
+            Vous devez être connecté pour accéder à votre panier et effectuer
+            des achats.
+          </Text>
+          <TouchableOpacity
+            style={styles.authButton}
+            onPress={() => router.push("/auth/login" as any)}
+          >
+            <User size={20} color="#FFFFFF" />
+            <Text style={styles.authButtonText}>Se connecter</Text>
+          </TouchableOpacity>
+        </View>
+      </View>
+    )
+  }
 
   if (items.length === 0) {
     return (
@@ -324,7 +359,7 @@ export default function ShopScreen() {
               <View style={styles.appliedPromoInfo}>
                 <Percent size={16} />
                 <Text style={styles.appliedPromoText}>
-                  {promoCode} (-{(promoDiscount * 100).toFixed(0)}%)
+                  {promoCode} (-{promoDiscount.toFixed(0)}%)
                 </Text>
               </View>
               <TouchableOpacity onPress={removePromoCode}>
@@ -736,5 +771,59 @@ const styles = StyleSheet.create({
   cartItemsSection: {
     marginHorizontal: 16,
     marginTop: -170,
+  },
+  // Styles pour l'authentification requise
+  authRequired: {
+    flex: 1,
+    backgroundColor: "#FFFFFF",
+    justifyContent: "center",
+    alignItems: "center",
+    paddingHorizontal: 32,
+  },
+  authContent: {
+    alignItems: "center",
+    maxWidth: 400,
+  },
+  authIcon: {
+    width: 96,
+    height: 96,
+    borderRadius: 48,
+    backgroundColor: "#F1F5F9",
+    justifyContent: "center",
+    alignItems: "center",
+    marginBottom: 24,
+  },
+  authTitle: {
+    fontSize: 24,
+    fontWeight: "800",
+    color: "#1E293B",
+    marginBottom: 12,
+    textAlign: "center",
+  },
+  authMessage: {
+    fontSize: 16,
+    color: "#64748B",
+    textAlign: "center",
+    lineHeight: 24,
+    marginBottom: 32,
+  },
+  authButton: {
+    backgroundColor: "#3B82F6",
+    flexDirection: "row",
+    alignItems: "center",
+    paddingHorizontal: 32,
+    paddingVertical: 16,
+    borderRadius: 16,
+    gap: 8,
+    shadowColor: "#3B82F6",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.2,
+    shadowRadius: 8,
+    elevation: 4,
+  },
+  authButtonText: {
+    fontSize: 16,
+    fontWeight: "700",
+    color: "#FFFFFF",
   },
 })

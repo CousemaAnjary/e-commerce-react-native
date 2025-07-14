@@ -1,10 +1,12 @@
+import { useAuth } from "@/context/AuthContext"
 import { useCart } from "@/context/CartContext"
 import { Tabs } from "expo-router"
-import { CircleUserRound, Home, ShoppingCart } from "lucide-react-native"
+import { CircleUserRound, Home, Lock, ShoppingCart } from "lucide-react-native"
 import { StyleSheet, Text, View } from "react-native"
 
 export default function TabLayout() {
   const { items } = useCart()
+  const { isAuthenticated } = useAuth()
 
   // Calculer le nombre total d'articles dans le panier
   const totalItemsCount = items.reduce(
@@ -37,7 +39,12 @@ export default function TabLayout() {
           tabBarIcon: ({ color, size }) => (
             <View style={styles.iconWrapper}>
               <ShoppingCart color={color} size={size} />
-              {totalItemsCount > 0 && (
+              {!isAuthenticated && (
+                <View style={styles.lockBadge}>
+                  <Lock size={12} color="#FFFFFF" />
+                </View>
+              )}
+              {isAuthenticated && totalItemsCount > 0 && (
                 <View style={styles.badge}>
                   <Text style={styles.badgeText}>
                     {totalItemsCount > 99 ? "99+" : totalItemsCount}
@@ -100,5 +107,18 @@ const styles = StyleSheet.create({
     fontWeight: "800",
     textAlign: "center",
     lineHeight: 14,
+  },
+  lockBadge: {
+    position: "absolute",
+    top: -2,
+    right: -8,
+    backgroundColor: "#F59E0B",
+    borderRadius: 10,
+    width: 20,
+    height: 20,
+    alignItems: "center",
+    justifyContent: "center",
+    borderWidth: 2,
+    borderColor: "#0F172A",
   },
 })

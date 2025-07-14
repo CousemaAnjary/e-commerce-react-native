@@ -1,3 +1,4 @@
+import LoadingScreen from "@/components/LoadingScreen"
 import AsyncStorage from "@react-native-async-storage/async-storage"
 import React, {
   createContext,
@@ -37,17 +38,30 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   const checkAuthStatus = async () => {
     try {
-      const token = await AsyncStorage.getItem("userToken")
-      const userData = await AsyncStorage.getItem("userData")
+      // Utiliser un timeout pour éviter les blocages
+      const timeoutPromise = new Promise((_, reject) =>
+        setTimeout(() => reject(new Error("Timeout")), 3000)
+      )
+
+      const authPromise = Promise.all([
+        AsyncStorage.getItem("userToken"),
+        AsyncStorage.getItem("userData"),
+      ])
+
+      const [token, userData] = (await Promise.race([
+        authPromise,
+        timeoutPromise,
+      ])) as [string | null, string | null]
 
       if (token && userData) {
         setUser(JSON.parse(userData))
       }
     } catch (error) {
-      console.error(
+      console.warn(
         "Erreur lors de la vérification du statut d'authentification:",
         error
       )
+      // Ne pas bloquer l'app, continuer sans authentification
     } finally {
       setIsLoading(false)
     }
@@ -172,6 +186,11 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     register,
     logout,
     updateProfile,
+  }
+
+  // Afficher un écran de chargement pendant l'initialisation
+  if (isLoading) {
+    return <LoadingScreen message="Initialisation..." />
   }
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>
