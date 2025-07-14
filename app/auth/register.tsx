@@ -1,83 +1,92 @@
-import React, { useState } from 'react';
+import { useAuth } from "@/context/AuthContext"
+import { router } from "expo-router"
+import { ArrowLeft, Eye, EyeOff, Lock, Mail, User } from "lucide-react-native"
+import React, { useState } from "react"
 import {
-  View,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  StyleSheet,
-  Alert,
   ActivityIndicator,
+  Alert,
   KeyboardAvoidingView,
   Platform,
   ScrollView,
-} from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { useAuth } from '@/context/AuthContext';
-import { Eye, EyeOff, Mail, Lock, User, ArrowLeft } from 'lucide-react-native';
-import { router } from 'expo-router';
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
+} from "react-native"
+import { SafeAreaView } from "react-native-safe-area-context"
 
 export default function RegisterScreen() {
-  const [name, setName] = useState('');
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
-  const [showPassword, setShowPassword] = useState(false);
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
-  
-  const { register } = useAuth();
+  const [name, setName] = useState("")
+  const [email, setEmail] = useState("")
+  const [password, setPassword] = useState("")
+  const [confirmPassword, setConfirmPassword] = useState("")
+  const [showPassword, setShowPassword] = useState(false)
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false)
+  const [isLoading, setIsLoading] = useState(false)
+
+  const { register } = useAuth()
 
   const handleRegister = async () => {
     if (!name || !email || !password || !confirmPassword) {
-      Alert.alert('Erreur', 'Veuillez remplir tous les champs');
-      return;
+      Alert.alert("Erreur", "Veuillez remplir tous les champs")
+      return
     }
 
-    if (!email.includes('@')) {
-      Alert.alert('Erreur', 'Veuillez entrer une adresse email valide');
-      return;
+    if (!email.includes("@")) {
+      Alert.alert("Erreur", "Veuillez entrer une adresse email valide")
+      return
     }
 
     if (password.length < 6) {
-      Alert.alert('Erreur', 'Le mot de passe doit contenir au moins 6 caractères');
-      return;
+      Alert.alert(
+        "Erreur",
+        "Le mot de passe doit contenir au moins 6 caractères"
+      )
+      return
     }
 
     if (password !== confirmPassword) {
-      Alert.alert('Erreur', 'Les mots de passe ne correspondent pas');
-      return;
+      Alert.alert("Erreur", "Les mots de passe ne correspondent pas")
+      return
     }
 
-    setIsLoading(true);
-    
+    setIsLoading(true)
+
     try {
-      const success = await register(name, email, password);
-      
+      const success = await register(name, email, password)
+
       if (success) {
-        Alert.alert('Succès', 'Compte créé avec succès !', [
-          { text: 'OK', onPress: () => router.replace('/(tabs)') }
-        ]);
+        Alert.alert("Succès", "Compte créé avec succès !", [
+          { text: "OK", onPress: () => router.replace("/(tabs)") },
+        ])
       } else {
-        Alert.alert('Erreur', 'Une erreur est survenue lors de la création du compte');
+        Alert.alert(
+          "Erreur",
+          "Une erreur est survenue lors de la création du compte"
+        )
       }
     } catch {
-      Alert.alert('Erreur', 'Une erreur est survenue lors de l&apos;inscription');
+      Alert.alert(
+        "Erreur",
+        "Une erreur est survenue lors de l&apos;inscription"
+      )
     } finally {
-      setIsLoading(false);
+      setIsLoading(false)
     }
-  };
+  }
 
   const goToLogin = () => {
-    router.back();
-  };
+    router.back()
+  }
 
   return (
     <SafeAreaView style={styles.container}>
-      <KeyboardAvoidingView 
-        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      <KeyboardAvoidingView
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
         style={styles.keyboardView}
       >
-        <ScrollView 
+        <ScrollView
           contentContainerStyle={styles.scrollContainer}
           showsVerticalScrollIndicator={false}
         >
@@ -181,7 +190,10 @@ export default function RegisterScreen() {
 
             {/* Register Button */}
             <TouchableOpacity
-              style={[styles.registerButton, isLoading && styles.registerButtonDisabled]}
+              style={[
+                styles.registerButton,
+                isLoading && styles.registerButtonDisabled,
+              ]}
               onPress={handleRegister}
               disabled={isLoading}
             >
@@ -194,9 +206,11 @@ export default function RegisterScreen() {
 
             {/* Terms */}
             <Text style={styles.termsText}>
-              En vous inscrivant, vous acceptez nos{' '}
-              <Text style={styles.termsLink}>Conditions d&apos;utilisation</Text>
-              {' '}et notre{' '}
+              En vous inscrivant, vous acceptez nos{" "}
+              <Text style={styles.termsLink}>
+                Conditions d&apos;utilisation
+              </Text>{" "}
+              et notre{" "}
               <Text style={styles.termsLink}>Politique de confidentialité</Text>
             </Text>
 
@@ -211,13 +225,13 @@ export default function RegisterScreen() {
         </ScrollView>
       </KeyboardAvoidingView>
     </SafeAreaView>
-  );
+  )
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: "#FFFFFF",
   },
   keyboardView: {
     flex: 1,
@@ -228,25 +242,25 @@ const styles = StyleSheet.create({
     paddingVertical: 32,
   },
   backButton: {
-    alignSelf: 'flex-start',
+    alignSelf: "flex-start",
     padding: 8,
     marginBottom: 16,
   },
   header: {
-    alignItems: 'center',
+    alignItems: "center",
     marginBottom: 32,
   },
   title: {
     fontSize: 32,
-    fontWeight: '800',
-    color: '#1E293B',
+    fontWeight: "800",
+    color: "#1E293B",
     marginBottom: 8,
     letterSpacing: -1,
   },
   subtitle: {
     fontSize: 16,
-    color: '#64748B',
-    textAlign: 'center',
+    color: "#64748B",
+    textAlign: "center",
     lineHeight: 24,
   },
   form: {
@@ -256,12 +270,12 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   inputWrapper: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: '#F8FAFC',
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "#F8FAFC",
     borderRadius: 16,
     borderWidth: 1,
-    borderColor: '#E2E8F0',
+    borderColor: "#E2E8F0",
     paddingHorizontal: 16,
     height: 56,
   },
@@ -271,19 +285,19 @@ const styles = StyleSheet.create({
   input: {
     flex: 1,
     fontSize: 16,
-    color: '#1E293B',
-    height: '100%',
+    color: "#1E293B",
+    height: "100%",
   },
   eyeIcon: {
     padding: 4,
   },
   registerButton: {
-    backgroundColor: '#3B82F6',
+    backgroundColor: "#3B82F6",
     borderRadius: 16,
     height: 56,
-    alignItems: 'center',
-    justifyContent: 'center',
-    shadowColor: '#3B82F6',
+    alignItems: "center",
+    justifyContent: "center",
+    shadowColor: "#3B82F6",
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.2,
     shadowRadius: 8,
@@ -295,34 +309,34 @@ const styles = StyleSheet.create({
   },
   registerButtonText: {
     fontSize: 16,
-    fontWeight: '700',
-    color: '#FFFFFF',
+    fontWeight: "700",
+    color: "#FFFFFF",
     letterSpacing: 0.5,
   },
   termsText: {
     fontSize: 12,
-    color: '#64748B',
-    textAlign: 'center',
+    color: "#64748B",
+    textAlign: "center",
     lineHeight: 18,
     marginTop: 16,
   },
   termsLink: {
-    color: '#3B82F6',
-    fontWeight: '600',
+    color: "#3B82F6",
+    fontWeight: "600",
   },
   loginContainer: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
     marginTop: 24,
   },
   loginText: {
     fontSize: 14,
-    color: '#64748B',
+    color: "#64748B",
   },
   loginLink: {
     fontSize: 14,
-    color: '#3B82F6',
-    fontWeight: '700',
+    color: "#3B82F6",
+    fontWeight: "700",
   },
-});
+})

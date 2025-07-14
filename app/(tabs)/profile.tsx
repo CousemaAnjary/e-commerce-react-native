@@ -1,131 +1,136 @@
-import React, { useState } from 'react';
+import { useAuth } from "@/context/AuthContext"
+import { router } from "expo-router"
 import {
-  View,
-  Text,
-  TouchableOpacity,
-  StyleSheet,
-  Alert,
-  ScrollView,
-  Image,
-  TextInput,
-  ActivityIndicator,
-} from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { useAuth } from '@/context/AuthContext';
-import { 
-  User, 
-  Settings, 
-  Heart, 
-  ShoppingBag, 
-  CreditCard, 
-  Bell, 
-  HelpCircle, 
-  LogOut,
+  Bell,
+  CreditCard,
   Edit2,
+  Heart,
+  HelpCircle,
+  LogOut,
   Save,
-  X
-} from 'lucide-react-native';
-import { router } from 'expo-router';
+  Settings,
+  ShoppingBag,
+  User,
+  X,
+} from "lucide-react-native"
+import React, { useState } from "react"
+import {
+  ActivityIndicator,
+  Alert,
+  Image,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
+} from "react-native"
+import { SafeAreaView } from "react-native-safe-area-context"
 
 export default function ProfileScreen() {
-  const { user, isAuthenticated, logout, updateProfile } = useAuth();
-  const [isEditing, setIsEditing] = useState(false);
-  const [editName, setEditName] = useState(user?.name || '');
-  const [editEmail, setEditEmail] = useState(user?.email || '');
-  const [isUpdating, setIsUpdating] = useState(false);
+  const { user, isAuthenticated, logout, updateProfile } = useAuth()
+  const [isEditing, setIsEditing] = useState(false)
+  const [editName, setEditName] = useState(user?.name || "")
+  const [editEmail, setEditEmail] = useState(user?.email || "")
+  const [isUpdating, setIsUpdating] = useState(false)
 
   const handleLogin = () => {
-    router.push('/auth/login' as any);
-  };
+    router.push("/auth/login" as any)
+  }
 
   const handleLogout = () => {
-    Alert.alert(
-      'Déconnexion',
-      'Êtes-vous sûr de vouloir vous déconnecter ?',
-      [
-        { text: 'Annuler', style: 'cancel' },
-        { 
-          text: 'Déconnexion', 
-          style: 'destructive',
-          onPress: () => logout()
-        }
-      ]
-    );
-  };
+    Alert.alert("Déconnexion", "Êtes-vous sûr de vouloir vous déconnecter ?", [
+      { text: "Annuler", style: "cancel" },
+      {
+        text: "Déconnexion",
+        style: "destructive",
+        onPress: () => logout(),
+      },
+    ])
+  }
 
   const handleSaveProfile = async () => {
     if (!editName.trim() || !editEmail.trim()) {
-      Alert.alert('Erreur', 'Veuillez remplir tous les champs');
-      return;
+      Alert.alert("Erreur", "Veuillez remplir tous les champs")
+      return
     }
 
-    if (!editEmail.includes('@')) {
-      Alert.alert('Erreur', 'Veuillez entrer une adresse email valide');
-      return;
+    if (!editEmail.includes("@")) {
+      Alert.alert("Erreur", "Veuillez entrer une adresse email valide")
+      return
     }
 
-    setIsUpdating(true);
-    
+    setIsUpdating(true)
+
     try {
-      const success = await updateProfile(editName.trim(), editEmail.trim());
-      
+      const success = await updateProfile(editName.trim(), editEmail.trim())
+
       if (success) {
-        setIsEditing(false);
-        Alert.alert('Succès', 'Profil mis à jour avec succès !');
+        setIsEditing(false)
+        Alert.alert("Succès", "Profil mis à jour avec succès !")
       } else {
-        Alert.alert('Erreur', 'Impossible de mettre à jour le profil');
+        Alert.alert("Erreur", "Impossible de mettre à jour le profil")
       }
     } catch {
-      Alert.alert('Erreur', 'Une erreur est survenue');
+      Alert.alert("Erreur", "Une erreur est survenue")
     } finally {
-      setIsUpdating(false);
+      setIsUpdating(false)
     }
-  };
+  }
 
   const cancelEdit = () => {
-    setEditName(user?.name || '');
-    setEditEmail(user?.email || '');
-    setIsEditing(false);
-  };
+    setEditName(user?.name || "")
+    setEditEmail(user?.email || "")
+    setIsEditing(false)
+  }
 
   const menuItems = [
     {
       icon: <ShoppingBag size={20} color="#64748B" />,
-      title: 'Mes commandes',
-      subtitle: 'Suivre vos achats',
-      onPress: () => Alert.alert('Fonctionnalité', 'Mes commandes - Bientôt disponible')
+      title: "Mes commandes",
+      subtitle: "Suivre vos achats",
+      onPress: () =>
+        Alert.alert("Fonctionnalité", "Mes commandes - Bientôt disponible"),
     },
     {
       icon: <Heart size={20} color="#64748B" />,
-      title: 'Mes favoris',
-      subtitle: 'Produits sauvegardés',
-      onPress: () => Alert.alert('Fonctionnalité', 'Mes favoris - Bientôt disponible')
+      title: "Mes favoris",
+      subtitle: "Produits sauvegardés",
+      onPress: () =>
+        Alert.alert("Fonctionnalité", "Mes favoris - Bientôt disponible"),
     },
     {
       icon: <CreditCard size={20} color="#64748B" />,
-      title: 'Moyens de paiement',
-      subtitle: 'Gérer vos cartes',
-      onPress: () => Alert.alert('Fonctionnalité', 'Moyens de paiement - Bientôt disponible')
+      title: "Moyens de paiement",
+      subtitle: "Gérer vos cartes",
+      onPress: () =>
+        Alert.alert(
+          "Fonctionnalité",
+          "Moyens de paiement - Bientôt disponible"
+        ),
     },
     {
       icon: <Bell size={20} color="#64748B" />,
-      title: 'Notifications',
-      subtitle: 'Préférences d&apos;alerte',
-      onPress: () => Alert.alert('Fonctionnalité', 'Notifications - Bientôt disponible')
+      title: "Notifications",
+      subtitle: "Préférences d&apos;alerte",
+      onPress: () =>
+        Alert.alert("Fonctionnalité", "Notifications - Bientôt disponible"),
     },
     {
       icon: <Settings size={20} color="#64748B" />,
-      title: 'Paramètres',
-      subtitle: 'Configuration de l&apos;app',
-      onPress: () => Alert.alert('Fonctionnalité', 'Paramètres - Bientôt disponible')
+      title: "Paramètres",
+      subtitle: "Configuration de l&apos;app",
+      onPress: () =>
+        Alert.alert("Fonctionnalité", "Paramètres - Bientôt disponible"),
     },
     {
       icon: <HelpCircle size={20} color="#64748B" />,
-      title: 'Aide & Support',
-      subtitle: 'Besoin d&apos;aide ?',
-      onPress: () => Alert.alert('Support', 'Contactez-nous à support@ecommerce.com')
+      title: "Aide & Support",
+      subtitle: "Besoin d&apos;aide ?",
+      onPress: () =>
+        Alert.alert("Support", "Contactez-nous à support@ecommerce.com"),
     },
-  ];
+  ]
 
   if (!isAuthenticated) {
     return (
@@ -143,7 +148,7 @@ export default function ProfileScreen() {
           </TouchableOpacity>
         </View>
       </SafeAreaView>
-    );
+    )
   }
 
   return (
@@ -153,7 +158,7 @@ export default function ProfileScreen() {
         <View style={styles.header}>
           <Text style={styles.headerTitle}>Profil</Text>
           {!isEditing && (
-            <TouchableOpacity 
+            <TouchableOpacity
               style={styles.editButton}
               onPress={() => setIsEditing(true)}
             >
@@ -164,11 +169,8 @@ export default function ProfileScreen() {
 
         {/* Profile Card */}
         <View style={styles.profileCard}>
-          <Image 
-            source={{ uri: user?.avatar }} 
-            style={styles.avatar}
-          />
-          
+          <Image source={{ uri: user?.avatar }} style={styles.avatar} />
+
           {isEditing ? (
             <View style={styles.editForm}>
               <View style={styles.inputContainer}>
@@ -180,7 +182,7 @@ export default function ProfileScreen() {
                   placeholderTextColor="#94A3B8"
                 />
               </View>
-              
+
               <View style={styles.inputContainer}>
                 <TextInput
                   style={styles.editInput}
@@ -194,7 +196,7 @@ export default function ProfileScreen() {
               </View>
 
               <View style={styles.editActions}>
-                <TouchableOpacity 
+                <TouchableOpacity
                   style={styles.cancelButton}
                   onPress={cancelEdit}
                   disabled={isUpdating}
@@ -202,8 +204,8 @@ export default function ProfileScreen() {
                   <X size={16} color="#64748B" />
                   <Text style={styles.cancelButtonText}>Annuler</Text>
                 </TouchableOpacity>
-                
-                <TouchableOpacity 
+
+                <TouchableOpacity
                   style={styles.saveButton}
                   onPress={handleSaveProfile}
                   disabled={isUpdating}
@@ -235,9 +237,7 @@ export default function ProfileScreen() {
               style={styles.menuItem}
               onPress={item.onPress}
             >
-              <View style={styles.menuIcon}>
-                {item.icon}
-              </View>
+              <View style={styles.menuIcon}>{item.icon}</View>
               <View style={styles.menuContent}>
                 <Text style={styles.menuTitle}>{item.title}</Text>
                 <Text style={styles.menuSubtitle}>{item.subtitle}</Text>
@@ -258,48 +258,48 @@ export default function ProfileScreen() {
         </View>
       </ScrollView>
     </SafeAreaView>
-  );
+  )
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: "#FFFFFF",
   },
   loginPrompt: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
     paddingHorizontal: 32,
   },
   loginIcon: {
     width: 96,
     height: 96,
     borderRadius: 48,
-    backgroundColor: '#F1F5F9',
-    justifyContent: 'center',
-    alignItems: 'center',
+    backgroundColor: "#F1F5F9",
+    justifyContent: "center",
+    alignItems: "center",
     marginBottom: 24,
   },
   loginTitle: {
     fontSize: 24,
-    fontWeight: '800',
-    color: '#1E293B',
+    fontWeight: "800",
+    color: "#1E293B",
     marginBottom: 8,
   },
   loginSubtitle: {
     fontSize: 16,
-    color: '#64748B',
-    textAlign: 'center',
+    color: "#64748B",
+    textAlign: "center",
     lineHeight: 24,
     marginBottom: 32,
   },
   loginButton: {
-    backgroundColor: '#3B82F6',
+    backgroundColor: "#3B82F6",
     paddingHorizontal: 32,
     paddingVertical: 16,
     borderRadius: 16,
-    shadowColor: '#3B82F6',
+    shadowColor: "#3B82F6",
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.2,
     shadowRadius: 8,
@@ -307,37 +307,37 @@ const styles = StyleSheet.create({
   },
   loginButtonText: {
     fontSize: 16,
-    fontWeight: '700',
-    color: '#FFFFFF',
+    fontWeight: "700",
+    color: "#FFFFFF",
   },
   header: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
     paddingHorizontal: 20,
     paddingVertical: 16,
   },
   headerTitle: {
     fontSize: 28,
-    fontWeight: '800',
-    color: '#1E293B',
+    fontWeight: "800",
+    color: "#1E293B",
   },
   editButton: {
     width: 40,
     height: 40,
     borderRadius: 20,
-    backgroundColor: '#F1F5F9',
-    justifyContent: 'center',
-    alignItems: 'center',
+    backgroundColor: "#F1F5F9",
+    justifyContent: "center",
+    alignItems: "center",
   },
   profileCard: {
-    backgroundColor: '#FFFFFF',
+    backgroundColor: "#FFFFFF",
     marginHorizontal: 20,
     marginBottom: 24,
     borderRadius: 20,
     padding: 24,
-    alignItems: 'center',
-    shadowColor: '#000',
+    alignItems: "center",
+    shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.08,
     shadowRadius: 12,
@@ -350,83 +350,83 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   profileInfo: {
-    alignItems: 'center',
+    alignItems: "center",
   },
   userName: {
     fontSize: 22,
-    fontWeight: '700',
-    color: '#1E293B',
+    fontWeight: "700",
+    color: "#1E293B",
     marginBottom: 4,
   },
   userEmail: {
     fontSize: 16,
-    color: '#64748B',
+    color: "#64748B",
   },
   editForm: {
-    width: '100%',
+    width: "100%",
     gap: 16,
   },
   inputContainer: {
     marginBottom: 8,
   },
   editInput: {
-    backgroundColor: '#F8FAFC',
+    backgroundColor: "#F8FAFC",
     borderRadius: 12,
     paddingHorizontal: 16,
     paddingVertical: 12,
     fontSize: 16,
-    color: '#1E293B',
+    color: "#1E293B",
     borderWidth: 1,
-    borderColor: '#E2E8F0',
+    borderColor: "#E2E8F0",
   },
   editActions: {
-    flexDirection: 'row',
+    flexDirection: "row",
     gap: 12,
     marginTop: 8,
   },
   cancelButton: {
     flex: 1,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: '#F1F5F9',
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: "#F1F5F9",
     paddingVertical: 12,
     borderRadius: 12,
     gap: 8,
   },
   cancelButtonText: {
     fontSize: 14,
-    fontWeight: '600',
-    color: '#64748B',
+    fontWeight: "600",
+    color: "#64748B",
   },
   saveButton: {
     flex: 1,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: '#3B82F6',
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: "#3B82F6",
     paddingVertical: 12,
     borderRadius: 12,
     gap: 8,
   },
   saveButtonText: {
     fontSize: 14,
-    fontWeight: '600',
-    color: '#FFFFFF',
+    fontWeight: "600",
+    color: "#FFFFFF",
   },
   menuSection: {
     marginHorizontal: 20,
     marginBottom: 24,
   },
   menuItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: '#FFFFFF',
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "#FFFFFF",
     paddingVertical: 16,
     paddingHorizontal: 20,
     borderRadius: 16,
     marginBottom: 8,
-    shadowColor: '#000',
+    shadowColor: "#000",
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.05,
     shadowRadius: 8,
@@ -436,9 +436,9 @@ const styles = StyleSheet.create({
     width: 40,
     height: 40,
     borderRadius: 20,
-    backgroundColor: '#F8FAFC',
-    justifyContent: 'center',
-    alignItems: 'center',
+    backgroundColor: "#F8FAFC",
+    justifyContent: "center",
+    alignItems: "center",
     marginRight: 16,
   },
   menuContent: {
@@ -446,19 +446,19 @@ const styles = StyleSheet.create({
   },
   menuTitle: {
     fontSize: 16,
-    fontWeight: '600',
-    color: '#1E293B',
+    fontWeight: "600",
+    color: "#1E293B",
     marginBottom: 2,
   },
   menuSubtitle: {
     fontSize: 14,
-    color: '#64748B',
+    color: "#64748B",
   },
   logoutButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: '#FEF2F2',
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: "#FEF2F2",
     marginHorizontal: 20,
     paddingVertical: 16,
     borderRadius: 16,
@@ -467,15 +467,15 @@ const styles = StyleSheet.create({
   },
   logoutText: {
     fontSize: 16,
-    fontWeight: '600',
-    color: '#EF4444',
+    fontWeight: "600",
+    color: "#EF4444",
   },
   appInfo: {
-    alignItems: 'center',
+    alignItems: "center",
     paddingBottom: 100,
   },
   appVersion: {
     fontSize: 12,
-    color: '#94A3B8',
+    color: "#94A3B8",
   },
-});
+})

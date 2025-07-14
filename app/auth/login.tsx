@@ -1,70 +1,70 @@
-import React, { useState } from 'react';
+import { useAuth } from "@/context/AuthContext"
+import { router } from "expo-router"
+import { Eye, EyeOff, Lock, Mail } from "lucide-react-native"
+import React, { useState } from "react"
 import {
-  View,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  StyleSheet,
-  Alert,
   ActivityIndicator,
+  Alert,
   KeyboardAvoidingView,
   Platform,
   ScrollView,
-} from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { useAuth } from '@/context/AuthContext';
-import { Eye, EyeOff, Mail, Lock } from 'lucide-react-native';
-import { router } from 'expo-router';
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
+} from "react-native"
+import { SafeAreaView } from "react-native-safe-area-context"
 
 export default function LoginScreen() {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [showPassword, setShowPassword] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
-  
-  const { login } = useAuth();
+  const [email, setEmail] = useState("")
+  const [password, setPassword] = useState("")
+  const [showPassword, setShowPassword] = useState(false)
+  const [isLoading, setIsLoading] = useState(false)
+
+  const { login } = useAuth()
 
   const handleLogin = async () => {
     if (!email || !password) {
-      Alert.alert('Erreur', 'Veuillez remplir tous les champs');
-      return;
+      Alert.alert("Erreur", "Veuillez remplir tous les champs")
+      return
     }
 
-    if (!email.includes('@')) {
-      Alert.alert('Erreur', 'Veuillez entrer une adresse email valide');
-      return;
+    if (!email.includes("@")) {
+      Alert.alert("Erreur", "Veuillez entrer une adresse email valide")
+      return
     }
 
-    setIsLoading(true);
-    
+    setIsLoading(true)
+
     try {
-      const success = await login(email, password);
-      
+      const success = await login(email, password)
+
       if (success) {
-        Alert.alert('Succès', 'Connexion réussie !', [
-          { text: 'OK', onPress: () => router.replace('/(tabs)') }
-        ]);
+        Alert.alert("Succès", "Connexion réussie !", [
+          { text: "OK", onPress: () => router.replace("/(tabs)") },
+        ])
       } else {
-        Alert.alert('Erreur', 'Email ou mot de passe incorrect');
+        Alert.alert("Erreur", "Email ou mot de passe incorrect")
       }
     } catch {
-      Alert.alert('Erreur', 'Une erreur est survenue lors de la connexion');
+      Alert.alert("Erreur", "Une erreur est survenue lors de la connexion")
     } finally {
-      setIsLoading(false);
+      setIsLoading(false)
     }
-  };
+  }
 
   const goToRegister = () => {
-    router.push('/auth/register' as any);
-  };
+    router.push("/auth/register" as any)
+  }
 
   return (
     <SafeAreaView style={styles.container}>
-      <KeyboardAvoidingView 
-        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      <KeyboardAvoidingView
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
         style={styles.keyboardView}
       >
-        <ScrollView 
+        <ScrollView
           contentContainerStyle={styles.scrollContainer}
           showsVerticalScrollIndicator={false}
         >
@@ -77,7 +77,8 @@ export default function LoginScreen() {
           {/* Demo Info */}
           <View style={styles.demoInfo}>
             <Text style={styles.demoText}>
-              🎯 <Text style={styles.demoBold}>Compte démo :</Text> demo@example.com / password
+              🎯 <Text style={styles.demoBold}>Compte démo :</Text>{" "}
+              demo@example.com / password
             </Text>
           </View>
 
@@ -128,12 +129,17 @@ export default function LoginScreen() {
 
             {/* Forgot Password */}
             <TouchableOpacity style={styles.forgotPassword}>
-              <Text style={styles.forgotPasswordText}>Mot de passe oublié ?</Text>
+              <Text style={styles.forgotPasswordText}>
+                Mot de passe oublié ?
+              </Text>
             </TouchableOpacity>
 
             {/* Login Button */}
             <TouchableOpacity
-              style={[styles.loginButton, isLoading && styles.loginButtonDisabled]}
+              style={[
+                styles.loginButton,
+                isLoading && styles.loginButtonDisabled,
+              ]}
               onPress={handleLogin}
               disabled={isLoading}
             >
@@ -162,56 +168,56 @@ export default function LoginScreen() {
         </ScrollView>
       </KeyboardAvoidingView>
     </SafeAreaView>
-  );
+  )
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: "#FFFFFF",
   },
   keyboardView: {
     flex: 1,
   },
   scrollContainer: {
     flexGrow: 1,
-    justifyContent: 'center',
+    justifyContent: "center",
     paddingHorizontal: 24,
     paddingVertical: 32,
   },
   header: {
-    alignItems: 'center',
+    alignItems: "center",
     marginBottom: 24,
   },
   title: {
     fontSize: 32,
-    fontWeight: '800',
-    color: '#1E293B',
+    fontWeight: "800",
+    color: "#1E293B",
     marginBottom: 8,
     letterSpacing: -1,
   },
   subtitle: {
     fontSize: 16,
-    color: '#64748B',
-    textAlign: 'center',
+    color: "#64748B",
+    textAlign: "center",
     lineHeight: 24,
   },
   demoInfo: {
-    backgroundColor: '#F1F5F9',
+    backgroundColor: "#F1F5F9",
     padding: 16,
     borderRadius: 12,
     marginBottom: 32,
     borderLeftWidth: 4,
-    borderLeftColor: '#3B82F6',
+    borderLeftColor: "#3B82F6",
   },
   demoText: {
     fontSize: 14,
-    color: '#475569',
-    textAlign: 'center',
+    color: "#475569",
+    textAlign: "center",
   },
   demoBold: {
-    fontWeight: '700',
-    color: '#1E293B',
+    fontWeight: "700",
+    color: "#1E293B",
   },
   form: {
     gap: 16,
@@ -220,12 +226,12 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   inputWrapper: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: '#F8FAFC',
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "#F8FAFC",
     borderRadius: 16,
     borderWidth: 1,
-    borderColor: '#E2E8F0',
+    borderColor: "#E2E8F0",
     paddingHorizontal: 16,
     height: 56,
   },
@@ -235,28 +241,28 @@ const styles = StyleSheet.create({
   input: {
     flex: 1,
     fontSize: 16,
-    color: '#1E293B',
-    height: '100%',
+    color: "#1E293B",
+    height: "100%",
   },
   eyeIcon: {
     padding: 4,
   },
   forgotPassword: {
-    alignSelf: 'flex-end',
+    alignSelf: "flex-end",
     marginBottom: 8,
   },
   forgotPasswordText: {
     fontSize: 14,
-    color: '#3B82F6',
-    fontWeight: '600',
+    color: "#3B82F6",
+    fontWeight: "600",
   },
   loginButton: {
-    backgroundColor: '#3B82F6',
+    backgroundColor: "#3B82F6",
     borderRadius: 16,
     height: 56,
-    alignItems: 'center',
-    justifyContent: 'center',
-    shadowColor: '#3B82F6',
+    alignItems: "center",
+    justifyContent: "center",
+    shadowColor: "#3B82F6",
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.2,
     shadowRadius: 8,
@@ -267,38 +273,38 @@ const styles = StyleSheet.create({
   },
   loginButtonText: {
     fontSize: 16,
-    fontWeight: '700',
-    color: '#FFFFFF',
+    fontWeight: "700",
+    color: "#FFFFFF",
     letterSpacing: 0.5,
   },
   divider: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     marginVertical: 24,
   },
   dividerLine: {
     flex: 1,
     height: 1,
-    backgroundColor: '#E2E8F0',
+    backgroundColor: "#E2E8F0",
   },
   dividerText: {
     fontSize: 14,
-    color: '#64748B',
+    color: "#64748B",
     marginHorizontal: 16,
-    fontWeight: '500',
+    fontWeight: "500",
   },
   registerContainer: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
   },
   registerText: {
     fontSize: 14,
-    color: '#64748B',
+    color: "#64748B",
   },
   registerLink: {
     fontSize: 14,
-    color: '#3B82F6',
-    fontWeight: '700',
+    color: "#3B82F6",
+    fontWeight: "700",
   },
-});
+})
