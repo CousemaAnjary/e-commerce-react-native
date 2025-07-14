@@ -1,143 +1,220 @@
-import React from 'react';
-import { View, Text, Image, StyleSheet, TouchableOpacity } from 'react-native';
-import { Minus, Plus, Trash2 } from 'lucide-react-native';
-import { Product } from '@/types/Product';
-import { useCart } from '@/context/CartContext';
+import { useCart } from "@/context/CartContext"
+import { Product } from "@/types/Product"
+import { Minus, Plus, Trash2 } from "lucide-react-native"
+import React from "react"
+import {
+  Alert,
+  Image,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native"
 
 type CartItemProps = {
-  product: Product;
-  quantity: number;
-};
+  product: Product
+  quantity: number
+}
 
 const CartItem = ({ product, quantity }: CartItemProps) => {
-  const { updateQuantity, removeItem } = useCart();
+  const { updateQuantity, removeItem } = useCart()
 
   const handleIncrease = () => {
-    updateQuantity(product.id, quantity + 1);
-  };
+    updateQuantity(product.id, quantity + 1)
+  }
 
   const handleDecrease = () => {
     if (quantity > 1) {
-      updateQuantity(product.id, quantity - 1);
+      updateQuantity(product.id, quantity - 1)
     } else {
-      removeItem(product.id);
+      removeItem(product.id)
     }
-  };
+  }
 
   const handleRemove = () => {
-    removeItem(product.id);
-  };
+    Alert.alert(
+      "Supprimer l'article",
+      `Voulez-vous vraiment supprimer "${product.name}" de votre panier ?`,
+      [
+        { text: "Annuler", style: "cancel" },
+        {
+          text: "Supprimer",
+          style: "destructive",
+          onPress: () => removeItem(product.id),
+        },
+      ]
+    )
+  }
+
+  // Calculer le prix total pour cet article
+  const itemTotal = product.price * quantity
 
   return (
     <View style={styles.container}>
-      <Image source={product.image } style={styles.image} />
-      
+      <Image source={product.image} style={styles.image} />
+
       <View style={styles.details}>
-        <Text style={styles.name} numberOfLines={1}>{product.name}</Text>
-        <Text style={styles.price}>${product.price.toFixed(2)}</Text>
-        
+        <Text style={styles.name} numberOfLines={2}>
+          {product.name}
+        </Text>
+        <View style={styles.priceContainer}>
+          <Text style={styles.price}>{product.price.toFixed(2)} €</Text>
+          {quantity > 1 && (
+            <Text style={styles.itemTotal}>
+              Total: {itemTotal.toFixed(2)} €
+            </Text>
+          )}
+        </View>
+
         <View style={styles.actions}>
           <View style={styles.quantityControls}>
-            <TouchableOpacity 
-              style={styles.quantityButton} 
+            <TouchableOpacity
+              style={[
+                styles.quantityButton,
+                quantity === 1 && styles.quantityButtonDisabled,
+              ]}
               onPress={handleDecrease}
               activeOpacity={0.7}
+              accessibilityLabel={`Diminuer la quantité de ${product.name}`}
+              accessibilityHint={
+                quantity === 1
+                  ? "Supprimera l'article du panier"
+                  : "Diminue la quantité de 1"
+              }
             >
-              <Minus size={16} color="#4B5563" />
+              <Minus size={18} />
             </TouchableOpacity>
-            
-            <Text style={styles.quantity}>{quantity}</Text>
-            
-            <TouchableOpacity 
-              style={styles.quantityButton} 
+
+            <Text
+              style={styles.quantity}
+              accessibilityLabel={`Quantité: ${quantity}`}
+            >
+              {quantity}
+            </Text>
+
+            <TouchableOpacity
+              style={styles.quantityButton}
               onPress={handleIncrease}
               activeOpacity={0.7}
+              accessibilityLabel={`Augmenter la quantité de ${product.name}`}
+              accessibilityHint="Augmente la quantité de 1"
             >
-              <Plus size={16} color="#4B5563" />
+              <Plus size={18} />
             </TouchableOpacity>
           </View>
-          
-          <TouchableOpacity 
-            style={styles.removeButton} 
+
+          <TouchableOpacity
+            style={styles.removeButton}
             onPress={handleRemove}
             activeOpacity={0.7}
+            accessibilityLabel={`Supprimer ${product.name} du panier`}
+            accessibilityHint="Supprime complètement cet article du panier"
           >
-            <Trash2 size={16} color="#EF4444" />
+            <Trash2 size={18} />
           </TouchableOpacity>
         </View>
       </View>
     </View>
-  );
-};
+  )
+}
 
 const styles = StyleSheet.create({
   container: {
-    flexDirection: 'row',
-    backgroundColor: '#FFFFFF',
+    flexDirection: "row",
+    backgroundColor: "#FFFFFF",
+    borderRadius: 16,
+    padding: 16,
+    marginBottom: 12,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.08,
+    shadowRadius: 8,
+    elevation: 3,
+    borderWidth: 1,
+    borderColor: "#F1F5F9",
+  },
+  image: {
+    width: 90,
+    height: 90,
     borderRadius: 12,
-    padding: 12,
-    marginBottom: 16,
-    shadowColor: '#000',
+    marginRight: 16,
+    backgroundColor: "#F8FAFC",
+  },
+  details: {
+    flex: 1,
+    justifyContent: "space-between",
+  },
+  name: {
+    fontSize: 16,
+    fontWeight: "600",
+    color: "#1F2937",
+    marginBottom: 6,
+    lineHeight: 22,
+  },
+  priceContainer: {
+    marginBottom: 12,
+  },
+  price: {
+    fontSize: 18,
+    fontWeight: "700",
+    color: "#3B82F6",
+    marginBottom: 2,
+  },
+  itemTotal: {
+    fontSize: 14,
+    fontWeight: "500",
+    color: "#6B7280",
+  },
+  actions: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+  },
+  quantityControls: {
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "#F8FAFC",
+    borderRadius: 12,
+    paddingHorizontal: 6,
+    paddingVertical: 4,
+    borderWidth: 1,
+    borderColor: "#E2E8F0",
+  },
+  quantityButton: {
+    width: 32,
+    height: 32,
+    justifyContent: "center",
+    alignItems: "center",
+    borderRadius: 8,
+    backgroundColor: "#FFFFFF",
+    shadowColor: "#000",
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.05,
     shadowRadius: 2,
     elevation: 1,
   },
-  image: {
-    width: 80,
-    height: 80,
-    borderRadius: 8,
-    marginRight: 12,
-  },
-  details: {
-    flex: 1,
-    justifyContent: 'space-between',
-  },
-  name: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: '#1F2937',
-    marginBottom: 4,
-  },
-  price: {
-    fontSize: 18,
-    fontWeight: '700',
-    color: '#3B82F6',
-    marginBottom: 8,
-  },
-  actions: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-  quantityControls: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: '#F3F4F6',
-    borderRadius: 8,
-    paddingHorizontal: 4,
-  },
-  quantityButton: {
-    width: 28,
-    height: 28,
-    justifyContent: 'center',
-    alignItems: 'center',
+  quantityButtonDisabled: {
+    backgroundColor: "#F8FAFC",
+    opacity: 0.6,
   },
   quantity: {
-    minWidth: 24,
-    textAlign: 'center',
-    fontSize: 14,
-    fontWeight: '600',
-    color: '#1F2937',
+    minWidth: 32,
+    textAlign: "center",
+    fontSize: 16,
+    fontWeight: "700",
+    color: "#1F2937",
+    marginHorizontal: 8,
   },
   removeButton: {
-    width: 32,
-    height: 32,
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderRadius: 16,
-    backgroundColor: '#FEE2E2',
+    width: 36,
+    height: 36,
+    justifyContent: "center",
+    alignItems: "center",
+    borderRadius: 18,
+    backgroundColor: "#FEE2E2",
+    borderWidth: 1,
+    borderColor: "#FECACA",
   },
-});
+})
 
-export default CartItem;
+export default CartItem
