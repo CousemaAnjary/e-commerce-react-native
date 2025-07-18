@@ -22,9 +22,10 @@ export default function LoginScreen() {
   const [showPassword, setShowPassword] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
 
-  
+
   const { login } = useAuth()
 
+  
   const handleLogin = async () => {
     if (!email || !password) {
       Alert.alert("Erreur", "Veuillez remplir tous les champs")
