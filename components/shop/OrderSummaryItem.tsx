@@ -1,6 +1,7 @@
-import { Product } from "@/types/Product"
 import React from "react"
+import { Product } from "@/types/Product"
 import { Image, StyleSheet, Text, View } from "react-native"
+
 
 type OrderSummaryItemProps = {
   product: Product
@@ -9,7 +10,7 @@ type OrderSummaryItemProps = {
 
 
 const OrderSummaryItem = ({ product, quantity }: OrderSummaryItemProps) => {
-  
+
   const itemTotal = product.price * quantity
 
   return (
