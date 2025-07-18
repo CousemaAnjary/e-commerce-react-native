@@ -9,6 +9,7 @@ type OrderSummaryItemProps = {
 
 
 const OrderSummaryItem = ({ product, quantity }: OrderSummaryItemProps) => {
+  
   const itemTotal = product.price * quantity
 
   return (
